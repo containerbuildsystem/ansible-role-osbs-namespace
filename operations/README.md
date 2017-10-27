@@ -20,6 +20,14 @@ Role Variables
     # Docker version to update to.
     osbs_docker_version: <default not set>
 
+    # Update OpenShift node labels.
+    osbs_update_node_labels: false
+    # A list of labels to be applied to each OpenShift node.
+    osbs_node_labels: []
+    # A list of all predefined node selector labels
+    osbs_managed_node_labels:
+        - "auto_build=true"
+
 See `operations/defaults/main.yml` for a comprehensive list of all
 available variables.
 
