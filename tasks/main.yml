@@ -188,5 +188,25 @@
   tags:
   - oc
 
+- name: copy prune cronjob yaml
+  template:
+    src: openshift-prune-cronjob.yml.j2
+    dest: "{{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-prune-cronjob.yml"
+  register: yaml_cronjob
+  when: osbs_prune
+  tags:
+  - oc
+
+- name: import prune cronjob yaml
+  command: >
+    oc replace
+    --namespace={{ osbs_namespace }}
+    --force=true
+    --filename={{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-prune-cronjob.yml
+  environment: "{{ osbs_environment }}"
+  when: osbs_prune and yaml_cronjob.changed
+  tags:
+  - oc
+
 - include: orchestrator.yml
   when: osbs_orchestrator

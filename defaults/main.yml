@@ -39,3 +39,9 @@ osbs_build_json_dir: /usr/share/osbs
 osbs_sources_command: fedpkg sources
 osbs_vendor: Fedora Project
 osbs_nodeselector: ''
+
+osbs_prune: false
+osbs_prune_schedule: '0 0 */8 * *'
+osbs_prune_secret: ''
+osbs_prune_image: ''
+osbs_prune_commands: ["/prune.sh"]
