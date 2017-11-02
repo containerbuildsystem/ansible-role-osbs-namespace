@@ -1,3 +1,6 @@
 ---
 - include: upgrade-docker.yml
   when: osbs_upgrade_docker
+
+- include: update-node-selector-labels.yml
+  when: osbs_update_node_labels
