@@ -104,6 +104,13 @@ Role Variables
     osbs_sources_command: fedpkg sources
     osbs_source_registry_uri: https://source.registry.fedoraproject.org  # Empty default value
 
+    # Pruning
+    osbs_prune: false
+    osbs_prune_schedule: '0 0 */8 * *'
+    osbs_prune_secret: ''
+    osbs_prune_image: ''
+    osbs_prune_commands: ["/prune.sh"]
+
 For a full list, see defaults/main.yml
 
 Dependencies
