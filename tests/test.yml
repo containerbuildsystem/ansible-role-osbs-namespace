@@ -169,14 +169,14 @@
     command: >
       oc -n test-non-admin get role osbs-custom-build
     register: cmd_role
-    failed_when: "'No resources found' not in cmd_role.stderr"
+    failed_when: ('No resources found' not in cmd_role.stderr) and ('NotFound' not in cmd_role.stderr)
     changed_when: false
 
   - name: custom rolebindings NOT created in non-admin namespace
     command: >
       oc -n test-non-admin get rolebinding {{ item }}
     register: cmd_rolebinding
-    failed_when: "'No resources found' not in cmd_rolebinding.stderr"
+    failed_when: ('No resources found' not in cmd_rolebinding.stderr) and ('NotFound' not in cmd_rolebinding.stderr)
     with_items:
     - osbs-admin
     - osbs-admin
@@ -226,7 +226,7 @@
     command: >
       oc -n test-limitrange get limitrange cpureq
     register: cmd_limitrange
-    failed_when: "'No resources found' not in cmd_limitrange.stderr"
+    failed_when: ('No resources found' not in cmd_limitrange.stderr) and ('NotFound' not in cmd_limitrange.stderr)
     changed_when: false
 
 - name: setup policybinding dedicated-admin namespace
