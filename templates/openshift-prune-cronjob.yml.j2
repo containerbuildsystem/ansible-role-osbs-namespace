@@ -12,13 +12,13 @@ spec:
           - name: token
             secret:
               defaultMode: 420
-              secretName: {{ osbs_prune_secret }}
+              secretName: "{{ osbs_prune_secret }}"
           containers:
           - name: build-pruner
-            image: {{ osbs_prune_image }}
-            {-% if osbs_prune_commands %}
-            command: {{ osbs_prune_commands }}
-            {% endif -%}
+            image: "{{ osbs_prune_image }}"
+
+            {% if osbs_prune_commands %}command: {{ osbs_prune_commands }}{% endif %}
+
             volumeMounts:
             - mountPath: /token
               name: token
