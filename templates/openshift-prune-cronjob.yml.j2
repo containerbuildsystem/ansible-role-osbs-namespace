@@ -13,6 +13,6 @@ spec:
           - name: build-pruner
             image: "{{ osbs_prune_image }}"
 
-            {% if osbs_prune_commands %}command: {{ osbs_prune_commands }}{% endif %}
+            {% if osbs_prune_commands %}command: {{ osbs_prune_commands | to_yaml }}{% endif %}
 
           restartPolicy: Never
