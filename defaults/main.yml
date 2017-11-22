@@ -42,6 +42,6 @@ osbs_nodeselector: ''
 
 osbs_prune: false
 osbs_prune_schedule: '0 0 */8 * *'
-osbs_prune_secret: ''
+osbs_prune_service_account: ''
 osbs_prune_image: ''
 osbs_prune_commands: ["/prune.sh"]

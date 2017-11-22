@@ -8,19 +8,11 @@ spec:
     spec:
       template:
         spec:
-          volumes:
-          - name: token
-            secret:
-              defaultMode: 420
-              secretName: "{{ osbs_prune_secret }}"
+          serviceAccountName: "{{ osbs_prune_serviceaccount }}"
           containers:
           - name: build-pruner
             image: "{{ osbs_prune_image }}"
 
-            {% if osbs_prune_commands %}command: {{ osbs_prune_commands }}{% endif %}
+            {% if osbs_prune_commands %}command: {{ osbs_prune_commands | to_yaml }}{% endif %}
 
-            volumeMounts:
-            - mountPath: /token
-              name: token
-              readOnly: true
           restartPolicy: Never

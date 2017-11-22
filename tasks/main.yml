@@ -120,6 +120,11 @@
     role_namespace: "{{ osbs_namespace }}"
     serviceaccounts: "{{ osbs_service_accounts }}"
 
+  - name: osbs-pruner-serviceaccounts
+    role: system:image-pruner
+    type: ClusterRoleBinding
+    serviceaccounts: ["{{ osbs_serviceaccount_pruner }}"]
+
   register: yaml_rolebindings
   when: osbs_is_admin
   tags:
