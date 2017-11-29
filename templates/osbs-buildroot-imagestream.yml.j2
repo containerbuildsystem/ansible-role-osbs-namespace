@@ -3,7 +3,7 @@ kind: ImageStream
 metadata:
   annotations:
     openshift.io/image.insecureRepository: {{ osbs_insecure_repository }}
-  name: osbs-buildroot
+  name: {{ osbs_buildroot_imagestream }}
   namespace: {{ osbs_namespace }}
 spec:
   dockerImageRepository: {{ osbs_buildroot_repository }}
