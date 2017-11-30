@@ -40,6 +40,7 @@ osbs_sources_command: fedpkg sources
 osbs_vendor: Fedora Project
 osbs_nodeselector: ''
 osbs_buildroot_repository: ''
+osbs_buildroot_imagestream: ''
 osbs_insecure_repository: true
 
 osbs_prune: false

@@ -23,7 +23,7 @@
     src: osbs-buildroot-imagestream.yml.j2
     dest: "{{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-osbs-buildroot-imagestream.yml"
   environment: "{{ osbs_environment }}"
-  when: osbs_buildroot_repository != ''
+  when: osbs_buildroot_repository != '' and osbs_buildroot_imagestream != ''
   register: yaml_imagestream
   tags:
   - oc
