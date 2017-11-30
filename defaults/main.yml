@@ -42,6 +42,7 @@ osbs_nodeselector: ''
 osbs_buildroot_repository: ''
 osbs_buildroot_imagestream: ''
 osbs_insecure_repository: true
+osbs_buildroot_imagestream_live_tag: ''
 
 osbs_prune: false
 osbs_prune_schedule: '0 0 */8 * *'
