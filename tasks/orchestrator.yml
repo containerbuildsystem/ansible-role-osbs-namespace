@@ -38,3 +38,16 @@
   when: yaml_imagestream.changed
   tags:
   - oc
+
+- name: update imagestream tag
+  command: >
+    oc import-image {{ osbs_buildroot_imagestream }}:{{ osbs_buildroot_imagestream_live_tag }}
+    --from {{ osbs_buildroot_repository }}
+    {{ " --insecure" if osbs_insecure_repository else ''}}
+  environment: "{{ osbs_environment }}"
+  when: osbs_buildroot_repository != '' and osbs_buildroot_imagestream != '' and osbs_buildroot_imagestream_live_tag != ''
+  register: imagestream_tag_updated
+  changed_when: ('The import completed successfully.' in imagestream_tag_updated.stdout)
+  failed_when: ('The import completed successfully.' not in imagestream_tag_updated.stdout)
+  tags:
+  - oc

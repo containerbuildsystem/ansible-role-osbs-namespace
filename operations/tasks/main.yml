@@ -4,3 +4,6 @@
 
 - include: update-node-selector-labels.yml
   when: osbs_update_node_labels
+
+- include: tag-buildroot.yml
+  when: osbs_buildroot_imagestream_live_tag != ''
