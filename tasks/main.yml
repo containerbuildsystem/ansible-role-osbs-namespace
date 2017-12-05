@@ -120,11 +120,6 @@
     role_namespace: "{{ osbs_namespace }}"
     serviceaccounts: "{{ osbs_service_accounts }}"
 
-  - name: osbs-pruner-serviceaccounts
-    role: system:image-pruner
-    type: ClusterRoleBinding
-    serviceaccounts: ["{{ osbs_serviceaccount_pruner }}"]
-
   register: yaml_rolebindings
   when: osbs_is_admin
   tags:
@@ -138,6 +133,34 @@
     --filename={{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-rolebinding-{{ item.item.name }}.yml
   environment: "{{ osbs_environment }}"
   with_items: "{{ yaml_rolebindings.results }}"
+  when: item.changed
+  tags:
+  - oc
+
+- name: copy pruner role binding
+  template:
+    src: "openshift-rolebinding.{{ item.yaml_version | default('v2') }}.yml.j2"
+    dest: "{{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-rolebinding-{{ item.name }}.yml"
+  with_items:
+
+  - name: osbs-pruner-serviceaccounts
+    role: system:image-pruner
+    type: ClusterRoleBinding
+    serviceaccounts: ["{{ osbs_serviceaccount_pruner }}"]
+
+  register: yaml_rolebindings_pruner
+  when: osbs_is_admin and osbs_serviceaccount_pruner is defined and osbs_serviceaccount_pruner
+  tags:
+  - oc
+
+- name: import pruner role bindings
+  command: >
+    oc replace
+    --namespace={{ osbs_namespace }}
+    --force=true
+    --filename={{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-rolebinding-{{ item.item.name }}.yml
+  environment: "{{ osbs_environment }}"
+  with_items: "{{ yaml_rolebindings_pruner.results }}"
   when: item.changed
   tags:
   - oc
