@@ -42,7 +42,7 @@
 - name: update imagestream tag
   command: >
     oc import-image {{ osbs_buildroot_imagestream }}:{{ osbs_buildroot_imagestream_live_tag }}
-    --from {{ osbs_buildroot_repository }}
+    --from {{ osbs_buildroot_repository }}:{{ osbs_buildroot_imagestream_live_tag }}
     {{ " --insecure" if osbs_insecure_repository else ''}}
   environment: "{{ osbs_environment }}"
   when: osbs_buildroot_repository != '' and osbs_buildroot_imagestream != '' and osbs_buildroot_imagestream_live_tag != ''
