@@ -133,7 +133,7 @@
     --filename={{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-rolebinding-{{ item.item.name }}.yml
   environment: "{{ osbs_environment }}"
   with_items: "{{ yaml_rolebindings.results }}"
-  when: item.changed
+  when: yaml_rolebindings.changed and item.changed
   tags:
   - oc
 
@@ -161,7 +161,7 @@
     --filename={{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-rolebinding-{{ item.item.name }}.yml
   environment: "{{ osbs_environment }}"
   with_items: "{{ yaml_rolebindings_pruner.results }}"
-  when: item.changed
+  when: yaml_rolebindings_pruner.changed and item.changed
   tags:
   - oc
 
