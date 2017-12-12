@@ -28,6 +28,13 @@ Role Variables
     osbs_managed_node_labels:
         - "auto_build=true"
 
+    # Disable a node to make it safe to perform
+    # operations such as restarting docker daemon
+    # or any other risky maintenance
+    osbs_disable_node: true
+    # Then to re-enable node:
+    osbs_enable_node: true
+
 See `operations/defaults/main.yml` for a comprehensive list of all
 available variables.
 
@@ -45,6 +52,15 @@ Example Playbook
          - role: ansible-role-osbs-namespace/operations
            osbs_upgrade_docker: true
            osbs_docker_version: docker-1.12.6-61.git85d7426.el7
+
+    - name: node maintenance
+      hosts: nodes
+      roles:
+          - role: ansible-role-osbs-namespace/operations
+            osbs_disable_node: true
+          - role: my-maintenance-role
+          - role: ansible-role-osbs-namespace/operations
+            osbs_enable_node: true
 
 License
 -------

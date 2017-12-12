@@ -3,6 +3,8 @@ osbs_kubeconfig_path: /etc/origin/master/admin.kubeconfig
 osbs_environment:
   KUBECONFIG: "{{ osbs_kubeconfig_path }}"
 
+osbs_disable_node: false
+osbs_enable_node: false
 osbs_upgrade_docker: false
 osbs_update_node_labels: false
 osbs_node_labels: []
