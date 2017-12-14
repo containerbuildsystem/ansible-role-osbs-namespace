@@ -11,8 +11,8 @@ osbs_node_labels: []
 osbs_managed_node_labels:
 - "auto_build=true"
 
-# Retry for about 20 minutes
-osbs_wait_active_pods_retries: 40
+# Retry for about 2 hours
+osbs_wait_active_pods_retries: 240
 osbs_wait_active_pods_delay: 30 # seconds
 
 # Wait for about 5 minutes
