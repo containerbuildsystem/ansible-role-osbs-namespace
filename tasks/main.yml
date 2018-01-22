@@ -149,7 +149,7 @@
     serviceaccounts: ["{{ osbs_serviceaccount_pruner }}"]
 
   register: yaml_rolebindings_pruner
-  when: osbs_is_admin and osbs_serviceaccount_pruner is defined and osbs_serviceaccount_pruner
+  when: osbs_is_admin and osbs_serviceaccount_pruner
   tags:
   - oc
 

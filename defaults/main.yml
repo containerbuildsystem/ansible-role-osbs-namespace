@@ -49,6 +49,7 @@ osbs_prune_schedule: '0 0 */8 * *'
 osbs_prune_service_account: ''
 osbs_prune_image: ''
 osbs_prune_commands: ["/prune.sh"]
+osbs_serviceaccount_pruner: ''
 
 osbs_odcs_enabled: false
 osbs_odcs_signing_intents: {}
