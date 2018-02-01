@@ -1,4 +1,13 @@
 ---
+# Query namespace
+- name: query osbs namespace
+  command: oc get project {{ osbs_namespace }}
+  register: namespace_result
+  failed_when: namespace_result.rc != 0 and ('not found' not in namespace_result.stderr)
+  changed_when: false
+  tags:
+  - oc
+
 # Create namespace
 - name: create osbs namespace
   command: oc new-project {{ osbs_namespace }}
@@ -6,6 +15,7 @@
   failed_when: new_project.rc != 0 and ('already exists' not in new_project.stderr)
   changed_when: new_project.rc == 0
   environment: "{{ osbs_environment }}"
+  when: "'not found' in namespace_result.stderr"
   tags:
   - oc
 
