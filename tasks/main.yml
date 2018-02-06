@@ -42,46 +42,6 @@
   tags:
   - oc
 
-# Setup policy binding
-- name: query policybinding
-  command: oc get policybinding {{ osbs_namespace }}:default --namespace {{ osbs_namespace }}
-  environment: "{{ osbs_environment }}"
-  register: policybinding_query
-  failed_when: policybinding_query.rc != 0 and ('not found' not in policybinding_query.stderr)
-  changed_when: false
-  when: osbs_is_admin
-  tags:
-  - oc
-
-- name: create a policybinding
-  command: oc create policybinding {{ osbs_namespace }} --namespace {{ osbs_namespace }}
-  environment: "{{ osbs_environment }}"
-  when: "osbs_is_admin and 'not found' in policybinding_query.stderr"
-  tags:
-  - oc
-
-# Setup role
-- name: copy role
-  template:
-    src: role-osbs-custom-build.yml.j2
-    dest: "{{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-role-osbs-custom-build.yml"
-  environment: "{{ osbs_environment }}"
-  register: yaml_role
-  when: osbs_is_admin
-  tags:
-  - oc
-
-- name: import role
-  command: >
-    oc replace
-    --namespace={{ osbs_namespace }}
-    --force=true
-    --filename={{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-role-osbs-custom-build.yml
-  environment: "{{ osbs_environment }}"
-  when: yaml_role.changed
-  tags:
-  - oc
-
 # Setup role bindings
 - name: copy role bindings
   template:
@@ -108,16 +68,12 @@
     groups: "{{ osbs_admin_groups }}"
 
   - name: osbs-custom-build-readwrite
-    role: osbs-custom-build
-    yaml_version: v1
-    role_namespace: "{{ osbs_namespace }}"
+    role: system:build-strategy-custom
     users: "{{ osbs_readwrite_users }}"
     groups: "{{ osbs_readwrite_groups }}"
 
   - name: osbs-custom-build-admin
-    role: osbs-custom-build
-    yaml_version: v1
-    role_namespace: "{{ osbs_namespace }}"
+    role: system:build-strategy-custom
     users: "{{ osbs_admin_users }}"
     groups: "{{ osbs_admin_groups }}"
 
@@ -126,8 +82,7 @@
     serviceaccounts: "{{ osbs_service_accounts }}"
 
   - name: osbs-custom-build-serviceaccounts
-    role: osbs-custom-build
-    role_namespace: "{{ osbs_namespace }}"
+    role: system:build-strategy-custom
     serviceaccounts: "{{ osbs_service_accounts }}"
 
   register: yaml_rolebindings
