@@ -89,6 +89,13 @@
     role: system:build-strategy-custom
     serviceaccounts: "{{ osbs_service_accounts }}"
 
+  - name: osbs-cluster-reader
+    role: cluster-reader
+    yaml_version: v1
+    type: ClusterRoleBinding
+    users: "{{ osbs_cluster_reader_users }}"
+    groups: "{{ osbs_cluster_reader_groups }}"
+
   register: yaml_rolebindings
   when: osbs_is_admin
   tags:

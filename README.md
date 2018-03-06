@@ -84,6 +84,14 @@ Role Variables
     - user1
     - user2
 
+    # Users and groups to be assigned cluster-reader clusterrole cluster wide
+    osbs_cluster_reader_groups:
+    - group1
+    - group2
+    osbs_cluster_reader_users:
+    - user1
+    - user2
+
     # Koji integration
     osbs_koji_secret_name: kojisecret
     osbs_koji_hub: https://koji.fedoraproject.org  # Empty default value

@@ -14,6 +14,8 @@ osbs_cpu_limitrange: ''
 
 osbs_admin_groups: []
 osbs_admin_users: []
+osbs_cluster_reader_groups: []
+osbs_cluster_reader_users: []
 osbs_readonly_groups: []
 osbs_readonly_users: []
 osbs_readwrite_groups: []
