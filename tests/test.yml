@@ -69,19 +69,11 @@
       oc -n test-worker get policybinding ':default'
     changed_when: false
 
-  - name: custom builds roles created
-    command: >
-      oc -n test-worker get role osbs-custom-build
-    changed_when: false
-
   - name: expected rolebindings created in worker namespace
     command: >
       oc -n test-worker get rolebinding {{ item }}
     with_items:
     - osbs-admin
-    - osbs-admin
-    - osbs-custom-build-admin
-    - osbs-custom-build-readwrite
     - osbs-custom-build-serviceaccounts
     - osbs-readonly
     - osbs-readwrite
