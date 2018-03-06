@@ -54,3 +54,5 @@ osbs_serviceaccount_pruner: ''
 osbs_odcs_enabled: false
 osbs_odcs_signing_intents: {}
 osbs_odcs_default_signing_intent: null
+osbs_odcs_api_url: ''
+osbs_odcs_auth_ssl_certs_dir: /usr/share/osbs
