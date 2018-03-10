@@ -1,0 +1,20 @@
+language: python
+
+cache: pip
+
+sudo: required
+
+services:
+  - docker
+
+before_install:
+- tests/pre-oc-cluster.sh
+
+install:
+- pip install ansible
+
+script:
+- cd tests && ansible-playbook -i test-inventory test.yml
+
+notifications:
+  email: false
