@@ -1,5 +1,5 @@
-Role Name
-=========
+osbs-namespace
+==============
 
 Setup an OpenShift namespace as required by OSBS:
 - Create namespace, also referred to as project (`osbs_namespace`)
@@ -58,7 +58,7 @@ Role Variables
     - bot
     - ci
 
-    # User and groups to be assigned view clusterrole in specified namespace
+    # Users and groups to be assigned view clusterrole in specified namespace
     osbs_readonly_groups:
     - group1
     - group2
@@ -81,6 +81,14 @@ Role Variables
     - group1
     - group2
     osbs_admin_users:
+    - user1
+    - user2
+
+    # Users and groups to be assigned cluster-reader clusterrole cluster wide
+    osbs_cluster_reader_groups:
+    - group1
+    - group2
+    osbs_cluster_reader_users:
     - user1
     - user2
 
