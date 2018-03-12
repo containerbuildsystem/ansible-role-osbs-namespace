@@ -138,6 +138,8 @@
       oc login -u system:admin
     register: cmd_login_admin
     changed_when: cmd_login_admin.rc == 0
+  tags:
+  - wip
 
 - name: test non-admin namespace
   hosts: masters
@@ -171,6 +173,8 @@
     - osbs-readwrite
     - osbs-readwrite-serviceaccounts
     changed_when: false
+  tags:
+  - wip
 
 - name: create limitrange namespace
   hosts: masters
@@ -276,6 +280,8 @@
       oc login -u system:admin
     register: cmd_login_admin
     changed_when: cmd_login_admin.rc == 0
+  tags:
+  - wip
 
 - name: test policybinding dedicated-admin namespace
   hosts: masters
@@ -294,6 +300,8 @@
     - osbs-readwrite
     - osbs-readwrite-serviceaccounts
     changed_when: false
+  tags:
+  - wip
 
 - name: setup users and groups in namespace
   hosts: masters

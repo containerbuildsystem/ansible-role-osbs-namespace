@@ -14,7 +14,7 @@ install:
 - pip install ansible
 
 script:
-- cd tests && ansible-playbook -i test-inventory test.yml
+- cd tests && ansible-playbook -i test-inventory test.yml --skip-tags wip
 
 notifications:
   email: false
