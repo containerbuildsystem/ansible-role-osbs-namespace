@@ -17,7 +17,8 @@
   - name: bring up new cluster
     command: >
       oc cluster up
-      --version v3.6.0
+      --image {{ osbs_test_ocp_image | default('registry.access.redhat.com/openshift3/ose') }}
+      --version {{ osbs_test_ocp_version | default('v3.7') }}
     register: cmd_cluster_up
     changed_when: cmd_cluster_up.rc == 0
 

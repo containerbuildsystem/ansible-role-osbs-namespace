@@ -13,8 +13,13 @@ before_install:
 install:
 - pip install ansible
 
+env:
+  matrix:
+  - OCP_VERSION=v3.6
+  - OCP_VERSION=v3.7
+
 script:
-- cd tests && ansible-playbook -i test-inventory test.yml --skip-tags wip
+- cd tests && ansible-playbook -i test-inventory test.yml --skip-tags wip -e "osbs_test_ocp_version=${OCP_VERSION}"
 
 notifications:
   email: false
