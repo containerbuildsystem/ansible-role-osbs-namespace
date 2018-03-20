@@ -13,3 +13,6 @@
 
 - include: enable-node.yml
   when: osbs_enable_node
+
+- include: override-systemd.yml
+  when: osbs_systemd_override
