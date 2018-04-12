@@ -17,6 +17,25 @@
   tags:
   - oc
 
+- name: generate reactor config maps
+  template:
+    src: reactor-config-map.yml.j2
+    dest: "{{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-{{ item.name }}.yml"
+  with_items: "{{ osbs_reactor_config_maps | with_isolated_workers }}"
+  register: yaml_reactor_config_maps
+  tags:
+  - oc
+
+- name: create reactor config maps
+  shell: >
+    oc --namespace={{ osbs_namespace }} create configmap {{ item.item.name }} \
+    --from-file='config.yaml'={{ item.dest }} --dry-run -o yaml | \
+    oc --namespace={{ osbs_namespace }} replace --force -f -
+  when: item.changed
+  with_items: "{{ yaml_reactor_config_maps.results }}"
+  tags:
+  - oc
+
 # Setup imagestream
 - name: copy imagestream
   template:

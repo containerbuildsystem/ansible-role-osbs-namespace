@@ -116,6 +116,28 @@
       {{ playbook_dir }}/tmp/test-orchestrator-client-config-secret.conf
     changed_when: false
 
+  - name: reactor config maps were generated properly
+    command: >
+      diff {{ playbook_dir }}/files/expected-{{ item }}.yml
+      {{ playbook_dir }}/tmp/test-host-test-orchestrator-{{ item }}.yml
+    changed_when: false
+    with_items:
+    - reactor-config-map-ppc64le-on-premise
+    - reactor-config-map-scratch-ppc64le-on-premise
+    - reactor-config-map-scratch-x86-64-aws
+    - reactor-config-map-scratch-x86-64-azure
+    - reactor-config-map-scratch-x86-64-on-premise
+    - reactor-config-map-scratch
+    - reactor-config-map-x86-64-aws
+    - reactor-config-map-x86-64-azure
+    - reactor-config-map-x86-64-on-premise
+    - reactor-config-map
+    register: cmd_diff_config_maps
+
+  - name: reactor config mpas were created
+    command: oc -n test-orchestrator get configmaps {{ item.item }}
+    changed_when: false
+    with_items: "{{ cmd_diff_config_maps.results }}"
 
 - name: setup namespace as non admin
   hosts: masters

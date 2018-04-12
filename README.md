@@ -52,6 +52,19 @@ Role Variables
           max_concurrent_builds: 6
           openshift_url: https://my-ppc64le-cluster.fedoraproject.org:8443
 
+    # Reactor config maps to be created in orchestrator namespace
+    osbs_reactor_config_maps:
+    - name: reactor-config-map
+      # See config.json schema in atomic-reactor project for details:
+      # https://github.com/projectatomic/atomic-reactor/blob/master/atomic_reactor/schemas/config.json
+      data:
+        clusters:
+            x86_64:
+            -   enabled: true
+                max_concurrent_builds: 10
+                name: x86_64-on-premise
+        version: 1
+
     # Service accounts to be created - these accounts will also be bound to
     # edit clusterrole and osbs-custom-build role in specified namespace
     osbs_service_accounts:
