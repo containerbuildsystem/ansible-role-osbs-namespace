@@ -5,7 +5,7 @@ artifacts_allowed_domains:
 - example.com/released
 clusters:
     x86_64:
-        enabled: true
+    -   enabled: true
         max_concurrent_builds: 10
         name: x86_64-on-premise
 image_labels:

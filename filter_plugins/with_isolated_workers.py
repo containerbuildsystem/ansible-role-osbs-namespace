@@ -43,7 +43,7 @@ def do_with_isolated_workers(reactor_configs):
                 name = _clean_kubernetes_name(config['name'] + '-' + worker_info['name'])
                 worker_config['name'] = name
 
-                worker_config['data']['clusters'] = {arch: worker_info}
+                worker_config['data']['clusters'] = {arch: [worker_info]}
 
                 all_configs.append(worker_config)
 
