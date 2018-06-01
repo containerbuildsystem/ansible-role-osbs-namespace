@@ -111,34 +111,6 @@
   tags:
   - oc
 
-- name: copy pruner role binding
-  template:
-    src: "openshift-rolebinding.{{ item.yaml_version | default('v2') }}.yml.j2"
-    dest: "{{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-rolebinding-{{ item.name }}.yml"
-  with_items:
-
-  - name: osbs-pruner-serviceaccounts
-    role: system:image-pruner
-    type: ClusterRoleBinding
-    serviceaccounts: ["{{ osbs_serviceaccount_pruner }}"]
-
-  register: yaml_rolebindings_pruner
-  when: osbs_is_admin and osbs_serviceaccount_pruner
-  tags:
-  - oc
-
-- name: import pruner role bindings
-  command: >
-    oc replace
-    --namespace={{ osbs_namespace }}
-    --force=true
-    --filename={{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-rolebinding-{{ item.item.name }}.yml
-  environment: "{{ osbs_environment }}"
-  with_items: "{{ yaml_rolebindings_pruner.results }}"
-  when: yaml_rolebindings_pruner.changed and item.changed
-  tags:
-  - oc
-
 - name: copy cpu limitrange
   template:
     src: openshift-limitrange.yml.j2
@@ -187,26 +159,6 @@
     -p '{"metadata":{"annotations":{"openshift.io/node-selector": "{{ osbs_nodeselector }}"}}}'
   environment: "{{ osbs_environment }}"
   when: osbs_nodeselector != '' and osbs_nodeselector != node_selector_value.stdout
-  tags:
-  - oc
-
-- name: copy prune cronjob yaml
-  template:
-    src: openshift-prune-cronjob.yml.j2
-    dest: "{{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-prune-cronjob.yml"
-  register: yaml_cronjob
-  when: osbs_prune
-  tags:
-  - oc
-
-- name: import prune cronjob yaml
-  command: >
-    oc replace
-    --namespace={{ osbs_namespace }}
-    --force=true
-    --filename={{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-prune-cronjob.yml
-  environment: "{{ osbs_environment }}"
-  when: osbs_prune and yaml_cronjob.changed
   tags:
   - oc
 

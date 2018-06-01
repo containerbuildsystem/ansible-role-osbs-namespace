@@ -46,13 +46,6 @@ osbs_buildroot_imagestream: ''
 osbs_insecure_repository: true
 osbs_buildroot_imagestream_live_tag: ''
 
-osbs_prune: false
-osbs_prune_schedule: '0 0 */8 * *'
-osbs_prune_service_account: ''
-osbs_prune_image: ''
-osbs_prune_commands: ["/prune.sh"]
-osbs_serviceaccount_pruner: ''
-
 osbs_odcs_enabled: false
 osbs_odcs_signing_intents: {}
 osbs_odcs_default_signing_intent: null
