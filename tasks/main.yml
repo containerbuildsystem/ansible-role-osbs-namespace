@@ -164,3 +164,6 @@
 
 - include: orchestrator.yml
   when: osbs_orchestrator
+
+- include: pruner.yml
+  when: "osbs_pruner_serviceaccount is defined"
