@@ -53,3 +53,16 @@ osbs_odcs_api_url: ''
 osbs_odcs_auth_ssl_certs_dir: /usr/share/osbs
 
 osbs_reactor_config_maps: []
+
+osbs_pruner_image: openshift3/ose
+osbs_pruner_command_build:
+- /usr/bin/oc
+- adm
+- prune
+- builds
+- --orphans=true
+- --confirm
+osbs_pruner_schedule_build: "0 0 * * *"
+osbs_pruner_successful_jobs: 5
+osbs_pruner_failed_jobs: 5
+osbs_pruner_clusterrole_build: system:openshift:controller:build-controller

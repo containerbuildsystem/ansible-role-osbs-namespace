@@ -1,0 +1,65 @@
+- name: Copy pruner service account definition
+  template:
+    src: openshift-serviceaccount.yml.j2
+    dest: "{{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-serviceaccount-{{ item }}.yml"
+  register: yaml_sa
+  with_items:
+  - "{{ osbs_pruner_serviceaccount }}"
+  tags:
+  - oc
+
+- name: Import pruner service account
+  command: >
+    oc create
+    --namespace={{ osbs_namespace }}
+    --filename={{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-serviceaccount-{{ osbs_pruner_serviceaccount }}.yml
+  register: service_account_import
+  failed_when: service_account_import.rc != 0 and ('already exists' not in service_account_import.stderr)
+  environment: "{{ osbs_environment }}"
+  when: yaml_sa.changed
+  tags:
+  - oc
+
+- name: Copy cluster rolebinding for pruner service account
+  template:
+    src: "openshift-rolebinding.v2.yml.j2"
+    dest: "{{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-rolebinding-{{ item.name }}.yml"
+  with_items:
+  - name: build-pruner
+    role: "{{ osbs_pruner_clusterrole_build }}"
+    serviceaccounts: "{{ osbs_pruner_serviceaccount }}"
+  register: yaml_rolebindings
+  when: osbs_is_admin
+  tags:
+  - oc
+
+- name: Import cluster rolebinding for pruner service account
+  command: >
+    oc replace
+    --namespace={{ osbs_namespace }}
+    --force=true
+    --filename={{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-rolebinding-{{ item.item.name }}.yml
+  environment: "{{ osbs_environment }}"
+  with_items: "{{ yaml_rolebindings.results }}"
+  when: yaml_rolebindings.changed and item.changed
+  tags:
+  - oc
+
+- name: Copy build-pruner cron job
+  template:
+    src: build-pruner-cronjob.yaml.j2
+    dest: "{{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-build-pruner-cronjob.yml"
+  register: yaml_cj
+  tags:
+  - oc
+
+- name: Import build-pruner cron job
+  command: >
+    oc replace
+    --namespace={{ osbs_namespace}}
+    --force=true
+    --filename={{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-build-pruner-cronjob.yml
+  environment: "{{ osbs_environment }}"
+  when: yaml_cj.changed
+  tags:
+  - oc

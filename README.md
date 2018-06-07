@@ -125,6 +125,24 @@ Role Variables
     osbs_sources_command: fedpkg sources
     osbs_source_registry_uri: https://source.registry.fedoraproject.org  # Empty default value
 
+    # Pruning
+    osbs_pruner_image: openshift3/ose
+    osbs_pruner_command_build:
+    - /usr/bin/oc
+    - adm
+    - prune
+    - builds
+    - --orphans=true
+    - --confirm
+    osbs_pruner_schedule_build: "0 0 * * *"
+    # Automatically prunes pods from CronJobs
+    osbs_pruner_successful_jobs: 5
+    osbs_pruner_failed_jobs: 5
+    # Define this variable to enable pruning: account will be created if absent
+    osbs_pruner_serviceaccount: pruner
+    # Which cluster-role to grant to the service account
+    osbs_pruner_clusterrole_build: system:openshift:controller:build-controller
+
 For a full list, see defaults/main.yml
 
 Dependencies
