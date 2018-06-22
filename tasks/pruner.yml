@@ -25,17 +25,17 @@
     src: "openshift-rolebinding.v2.yml.j2"
     dest: "{{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-rolebinding-{{ item.name }}.yml"
   with_items:
-  # For listing builds
-  - name: "{{ osbs_namespace }}-build-pruner-read"
-    role: "view"
-    serviceaccounts:
-    - "{{ osbs_pruner_serviceaccount }}"
-  # For listing buildconfigs and deleting builds
+  # For listing buildconfigs and builds
   # Must allow listing buildconfigs across all namespaces due to
   # this being required by 'oc adm prune'
-  - name: "{{ osbs_namespace }}-build-pruner-delete"
-    role: "{{ osbs_pruner_clusterrole_build }}"
+  - name: "{{ osbs_namespace }}-build-pruner-read"
+    role: "{{ osbs_pruner_build_clusterrole_read }}"
     type: ClusterRoleBinding
+    serviceaccounts:
+    - "{{ osbs_pruner_serviceaccount }}"
+  # For deleting builds (in this namespace only)
+  - name: "{{ osbs_namespace }}-build-pruner-delete"
+    role: "{{ osbs_pruner_build_role_delete }}"
     serviceaccounts:
     - "{{ osbs_pruner_serviceaccount }}"
   register: yaml_rolebindings
