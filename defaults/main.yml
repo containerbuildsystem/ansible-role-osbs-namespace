@@ -68,4 +68,4 @@ osbs_pruner_successful_jobs: 5
 osbs_pruner_failed_jobs: 5
 osbs_pruner_build_clusterrole_read: system:openshift:controller:build-config-change-controller
 osbs_pruner_build_role_delete: edit
-osbs_pruner_cronjob_api_version: batch/v2alpha2
+osbs_pruner_cronjob_api_version: batch/v2alpha1
