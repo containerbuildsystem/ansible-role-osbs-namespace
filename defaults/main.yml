@@ -62,6 +62,7 @@ osbs_pruner_command_build:
 - "--namespace={{ osbs_namespace }}"
 - builds
 - --orphans=true
+- --keep-complete=3
 - --confirm
 osbs_pruner_schedule_build: "0 0 * * *"
 osbs_pruner_successful_jobs: 5
