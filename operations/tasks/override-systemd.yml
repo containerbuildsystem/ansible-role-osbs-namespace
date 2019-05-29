@@ -8,4 +8,14 @@
   notify:
   - restart atomic-openshift-node
 
+- name: set LimitNOFILE /etc/systemd/system.conf
+  lineinfile:
+    path: /etc/systemd/system.conf
+    regexp: 'DefaultLimitNOFILE='
+    line: 'DefaultLimitNOFILE={{ osbs_systemd_limit_nofile }}'
+    backup: yes
+
+- name: restart systemd
+  command: systemctl daemon-reexec
+
 - meta: flush_handlers
