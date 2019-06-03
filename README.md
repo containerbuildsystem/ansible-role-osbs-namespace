@@ -56,7 +56,7 @@ Role Variables
     osbs_reactor_config_maps:
     - name: reactor-config-map
       # See config.json schema in atomic-reactor project for details:
-      # https://github.com/projectatomic/atomic-reactor/blob/master/atomic_reactor/schemas/config.json
+      # https://github.com/containerbuildsystem/atomic-reactor/blob/master/atomic_reactor/schemas/config.json
       data:
         clusters:
             x86_64:
