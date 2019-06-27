@@ -99,23 +99,6 @@
   tags:
     orchestrator
   tasks:
-  - name: reactor config secret generated
-    stat:
-      path: tmp/test-orchestrator-reactor-config-secret.yml
-    register: stat_reactor_config_secret
-    changed_when: false
-
-  - name: fail if reactor config secret was generated
-    fail:
-      msg: Reactor config secret file not created!
-    when: not stat_reactor_config_secret.stat.exists
-
-  - name: client-config-secret was generated properly
-    command: >
-      diff {{ playbook_dir }}/files/expected-client-config-secret.conf
-      {{ playbook_dir }}/tmp/test-orchestrator-client-config-secret.conf
-    changed_when: false
-
   - name: reactor config maps were generated properly
     command: >
       diff {{ playbook_dir }}/files/expected-{{ item }}.yml
