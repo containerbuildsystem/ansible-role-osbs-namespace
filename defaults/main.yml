@@ -22,35 +22,12 @@ osbs_readwrite_groups: []
 osbs_readwrite_users: []
 
 osbs_orchestrator: false
-osbs_worker_clusters: {}
 
-osbs_koji_secret_name: kojisecret
-osbs_distribution_scope: public
-osbs_authoritative_registry: registry.fedoraproject.org
-osbs_koji_hub: ''
-osbs_koji_root: ''
-osbs_pulp_registry_name: ''
-osbs_pulp_secret_name: pulpsecret
-osbs_registry_api_versions:
-- v1
-- v2
-osbs_registry_secret_name: v2-registry-dockercfg
-osbs_registry_uri: ''
-osbs_source_registry_uri: ''
-osbs_build_json_dir: /usr/share/osbs
-osbs_sources_command: fedpkg sources
-osbs_vendor: Fedora Project
 osbs_nodeselector: ''
 osbs_buildroot_repository: ''
 osbs_buildroot_imagestream: ''
 osbs_insecure_repository: true
 osbs_buildroot_imagestream_live_tag: ''
-
-osbs_odcs_enabled: false
-osbs_odcs_signing_intents: {}
-osbs_odcs_default_signing_intent: null
-osbs_odcs_api_url: ''
-osbs_odcs_auth_ssl_certs_dir: /usr/share/osbs
 
 osbs_reactor_config_maps: []
 
