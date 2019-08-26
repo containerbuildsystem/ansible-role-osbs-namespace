@@ -99,6 +99,12 @@
   tags:
     orchestrator
   tasks:
+  - name: client-config-secret was generated properly
+    command: >
+      diff {{ playbook_dir }}/files/expected-client-config-secret.conf
+      {{ playbook_dir }}/tmp/test-orchestrator-client-config-secret.conf
+    changed_when: false
+
   - name: reactor config maps were generated properly
     command: >
       diff {{ playbook_dir }}/files/expected-{{ item }}.yml

@@ -11,6 +11,8 @@ If user is cluster admin (`osbs_is_admin`), the following is also performed:
 - Sets up rolebindings for specified users, groups and service accounts
 
 For orchestrator namespaces (`osbs_orchestrator`):
+- client-config-secret is generated and stored in `osbs_generated_config_path`
+  use osbs-secret to import it
 - reactor-config-map ConfigMap is generated
 
 Requirements
@@ -27,6 +29,27 @@ Role Variables
     osbs_is_admin: true
     # Will the namespace be used for orchestrator builds?
     osbs_orchestrator: true
+
+    # Worker clusters to be used for generating reactor and client config secrets
+    # in orchestrator workspace
+    osbs_worker_clusters:
+      x86_64:
+        - name: prod-first-x86_64
+          max_concurrent_builds: 6
+          openshift_url: https://my-first-x86_64-cluster.fedoraproject.org:8443
+        - name: prod-second-x86_64
+          max_concurrent_builds: 16
+          openshift_url: https://my-second-x86_64-cluster.fedoraproject.org
+          # optional params, and their defaults:
+          enabled: true # yaml boolean
+          namespace: worker
+          use_auth: 'true' # yaml string
+          verify_ssl: 'true' # yaml string
+
+      ppc64le:
+        - name: prod-ppc64le
+          max_concurrent_builds: 6
+          openshift_url: https://my-ppc64le-cluster.fedoraproject.org:8443
 
     # Reactor config maps to be created in orchestrator namespace
     osbs_reactor_config_maps:
