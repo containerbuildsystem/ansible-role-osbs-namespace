@@ -22,7 +22,9 @@ osbs_readwrite_groups: []
 osbs_readwrite_users: []
 
 osbs_orchestrator: false
+osbs_worker_clusters: {}
 
+osbs_build_json_dir: /usr/share/osbs
 osbs_nodeselector: ''
 osbs_buildroot_repository: ''
 osbs_buildroot_imagestream: ''

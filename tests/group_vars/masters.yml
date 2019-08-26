@@ -1,4 +1,18 @@
 
+osbs_worker_clusters:
+  x86_64:
+  - name: 'minimum'
+    max_concurrent_builds: 1
+    openshift_url: 'https://minimum-worker.test.fedoraproject.org'
+    verify_ssl: 'false'
+
+  - name: 'all_values'
+    namespace: 'spam'
+    max_concurrent_builds: 99
+    openshift_url: 'https://all_values-worker.test.fedoraproject.org'
+    verify_ssl: 'false'
+    use_auth: 'false'
+
 _reactor_config_map:
   version: 1
 
