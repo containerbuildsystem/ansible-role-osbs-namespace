@@ -50,3 +50,13 @@ osbs_pruner_successful_jobs: 5
 osbs_pruner_failed_jobs: 5
 osbs_pruner_build_clusterrole_read: system:openshift:controller:build-config-change-controller
 osbs_pruner_build_role_delete: edit
+
+# You need to provide an image that contains oc and jq commands
+osbs_remove_unused_istags_image: ''
+osbs_remove_unused_istags_command:
+- /bin/bash
+- -c
+- "{{ lookup('template', 'remove-unused-istags.sh.j2') }}"
+osbs_remove_unused_istags_schedule_build: "5 0 * * *"
+osbs_remove_unused_istags_successful_jobs: 5
+osbs_remove_unused_istags_failed_jobs: 5

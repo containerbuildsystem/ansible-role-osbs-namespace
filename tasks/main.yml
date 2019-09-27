@@ -167,3 +167,6 @@
 
 - include: pruner.yml
   when: "osbs_pruner_serviceaccount is defined"
+
+- include: remove-unused-istags.yaml
+  when: "osbs_remove_unused_istags_serviceaccount is defined"

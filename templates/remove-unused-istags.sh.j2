@@ -1,0 +1,39 @@
+#!/bin/bash
+set -exuo pipefail
+
+OC='oc -n {{ osbs_namespace }}'
+
+autorebuild_imagestream_tags=$(
+    $OC get bc -o json | \
+    jq '.items[].spec.triggers[].imageChange?.from.name' -r | \
+    sort -u
+)
+
+delete_threshold=$(date --date="7 days ago" --iso-8601=seconds --utc)
+
+old_imagestream_tags=$(
+    $OC get imagestreamtags -o json | \
+    jq '.items[].metadata | select(.creationTimestamp < "'${delete_threshold}'") | .name' -r | \
+    sort -u
+)
+
+set +e
+unwanted_imagestream_tags=$(
+    comm -23 <(echo "$old_imagestream_tags") <(echo "$autorebuild_imagestream_tags") | \
+    grep -v '^osbs-rcm-buildroot:' | \
+    grep -v '^osbs-test-autorebuild-from-scratch-parent:'
+)
+set -e
+
+if [ -z "$unwanted_imagestream_tags" ]
+then
+    echo "Nothing to remove."
+    exit 0
+fi
+
+echo -e "${unwanted_imagestream_tags}"
+echo
+count=$(wc -l <<<${unwanted_imagestream_tags})
+echo "SUMMARY: ${count} ImageStreamTags will be removed"
+
+$OC delete imagestreamtags ${unwanted_imagestream_tags}
