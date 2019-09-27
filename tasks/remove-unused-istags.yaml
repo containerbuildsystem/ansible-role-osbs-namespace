@@ -1,0 +1,39 @@
+- import_tasks: tasks/generic/serviceaccount.yml
+  vars:
+    osbs_generic_serviceaccount_name: "{{ osbs_remove_unused_istags_serviceaccount }}"
+
+- name: Copy rolebinding for {{ osbs_remove_unused_istags_serviceaccount }} service account
+  template:
+    src: "openshift-rolebinding.v2.yml.j2"
+    dest: "{{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-rolebinding-{{ item.name }}.yml"
+  with_items:
+  # For deleting imagestream tags in this namespace
+  - name: "{{ osbs_namespace }}-remove-unused-istags"
+    role: edit
+    serviceaccounts:
+    - "{{ osbs_remove_unused_istags_serviceaccount }}"
+  register: yaml_rolebindings
+  tags:
+  - oc
+
+- name: Import cluster rolebinding for {{ osbs_remove_unused_istags_serviceaccount }} service account
+  command: >
+    oc replace
+    --namespace={{ osbs_namespace }}
+    --force=true
+    --filename={{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-rolebinding-{{ item.item.name }}.yml
+  environment: "{{ osbs_environment }}"
+  with_items: "{{ yaml_rolebindings.results }}"
+  when: yaml_rolebindings.changed and item.changed
+  tags:
+  - oc
+
+- import_tasks: tasks/generic/cronjob.yml
+  vars:
+    osbs_generic_cronjob_name: remove-unused-istags
+    osbs_generic_cronjob_serviceaccount: "{{ osbs_remove_unused_istags_serviceaccount }}"
+    osbs_generic_cronjob_schedule: "{{ osbs_remove_unused_istags_schedule_build }}"
+    osbs_generic_cronjob_successful_jobs: "{{ osbs_remove_unused_istags_successful_jobs }}"
+    osbs_generic_cronjob_failed_jobs: "{{ osbs_remove_unused_istags_failed_jobs }}"
+    osbs_generic_cronjob_image: "{{ osbs_remove_unused_istags_image }}"
+    osbs_generic_cronjob_command: "{{ osbs_remove_unused_istags_command }}"
