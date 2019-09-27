@@ -1,26 +1,8 @@
-- name: Copy pruner service account definition
-  template:
-    src: openshift-serviceaccount.yml.j2
-    dest: "{{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-serviceaccount-{{ item }}.yml"
-  register: yaml_sa
-  with_items:
-  - "{{ osbs_pruner_serviceaccount }}"
-  tags:
-  - oc
+- import_tasks: tasks/generic/serviceaccount.yml
+  vars:
+    osbs_generic_serviceaccount_name: "{{ osbs_pruner_serviceaccount }}"
 
-- name: Import pruner service account
-  command: >
-    oc create
-    --namespace={{ osbs_namespace }}
-    --filename={{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-serviceaccount-{{ osbs_pruner_serviceaccount }}.yml
-  register: service_account_import
-  failed_when: service_account_import.rc != 0 and ('already exists' not in service_account_import.stderr)
-  environment: "{{ osbs_environment }}"
-  when: yaml_sa.changed
-  tags:
-  - oc
-
-- name: Copy cluster rolebinding for pruner service account
+- name: Copy cluster rolebinding for {{ osbs_pruner_serviceaccount }} service account
   template:
     src: "openshift-rolebinding.v2.yml.j2"
     dest: "{{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-rolebinding-{{ item.name }}.yml"
@@ -43,7 +25,7 @@
   tags:
   - oc
 
-- name: Import cluster rolebinding for pruner service account
+- name: Import rolebinding for {{ osbs_pruner_serviceaccount }} service account
   command: >
     oc replace
     --namespace={{ osbs_namespace }}
@@ -55,21 +37,12 @@
   tags:
   - oc
 
-- name: Copy build-pruner cron job
-  template:
-    src: build-pruner-cronjob.yaml.j2
-    dest: "{{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-build-pruner-cronjob.yml"
-  register: yaml_cj
-  tags:
-  - oc
-
-- name: Import build-pruner cron job
-  command: >
-    oc replace
-    --namespace={{ osbs_namespace}}
-    --force=true
-    --filename={{ osbs_openshift_home }}/{{ inventory_hostname }}-{{ osbs_namespace }}-build-pruner-cronjob.yml
-  environment: "{{ osbs_environment }}"
-  when: yaml_cj.changed
-  tags:
-  - oc
+- import_tasks: tasks/generic/cronjob.yml
+  vars:
+    osbs_generic_cronjob_name: build-pruner
+    osbs_generic_cronjob_serviceaccount: "{{ osbs_pruner_serviceaccount }}"
+    osbs_generic_cronjob_schedule: "{{ osbs_pruner_schedule_build }}"
+    osbs_generic_cronjob_successful_jobs: "{{ osbs_pruner_successful_jobs }}"
+    osbs_generic_cronjob_failed_jobs: "{{ osbs_pruner_failed_jobs }}"
+    osbs_generic_cronjob_image: "{{ osbs_pruner_image }}"
+    osbs_generic_cronjob_command: "{{ osbs_pruner_command_build }}"
