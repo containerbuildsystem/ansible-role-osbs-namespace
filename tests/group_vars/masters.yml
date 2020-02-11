@@ -12,6 +12,7 @@ osbs_worker_clusters:
     openshift_url: 'https://all_values-worker.test.fedoraproject.org'
     verify_ssl: 'false'
     use_auth: 'false'
+    scratch_build_node_selector: 'test=true'
 
 _reactor_config_map:
   version: 1
