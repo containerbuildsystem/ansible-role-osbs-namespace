@@ -1,156 +1,153 @@
-osbs-namespace
-==============
+# Ansible Roles OSBS Namespace
 
-Setup an OpenShift namespace as required by OSBS:
-- Create namespace, also referred to as project (`osbs_namespace`)
-- Create service accounts (`osbs_service_accounts`)
+- Setup an OpenShift namespace as required by OSBS
+  - Create namespace, also referred to as project (`osbs_namespace`)
+  - Create service accounts (`osbs_service_accounts`)
+- If user is cluster admin (`osbs_is_admin`), the following is also performed
+  - Create policy binding
+  - Create osbs-custom-build role to allow custom builds
+  - Sets up rolebindings for specified users, groups and service accounts
+- For orchestrator namespaces (`osbs_orchestrator`)
+  - 'client-config-secret' is generated and stored in
+    `osbs_generated_config_path`; use osbs-secret to import it
+  - reactor-config-map ConfigMap is generated
 
-If user is cluster admin (`osbs_is_admin`), the following is also performed:
-- Create policy binding
-- Create osbs-custom-build role to allow custom builds
-- Sets up rolebindings for specified users, groups and service accounts
-
-For orchestrator namespaces (`osbs_orchestrator`):
-- client-config-secret is generated and stored in `osbs_generated_config_path`
-  use osbs-secret to import it
-- reactor-config-map ConfigMap is generated
-
-Requirements
-------------
+## Requirements
 
 A running instance of OpenShift.
 
-Role Variables
---------------
+## Role Variables
 
-    # Namespace name to be used
-    osbs_namespace: 'my-namespace'
-    # Is user running playbook as cluster admin?
-    osbs_is_admin: true
-    # Will the namespace be used for orchestrator builds?
-    osbs_orchestrator: true
+```yaml
+# Namespace name to be used
+osbs_namespace: 'my-namespace'
+# Is user running playbook as cluster admin?
+osbs_is_admin: true
+# Will the namespace be used for orchestrator builds?
+osbs_orchestrator: true
 
-    # Worker clusters to be used for generating reactor and client config secrets
-    # in orchestrator workspace
-    osbs_worker_clusters:
-      x86_64:
-        - name: prod-first-x86_64
-          max_concurrent_builds: 6
-          openshift_url: https://my-first-x86_64-cluster.fedoraproject.org:8443
-        - name: prod-second-x86_64
-          max_concurrent_builds: 16
-          openshift_url: https://my-second-x86_64-cluster.fedoraproject.org
-          # optional params, and their defaults:
-          enabled: true # yaml boolean
-          namespace: worker
-          use_auth: 'true' # yaml string
-          verify_ssl: 'true' # yaml string
+# Worker clusters to be used for generating reactor and client config secrets
+# in orchestrator workspace
+osbs_worker_clusters:
+  x86_64:
+    - name: prod-first-x86_64
+      max_concurrent_builds: 6
+      openshift_url: https://my-first-x86_64-cluster.fedoraproject.org:8443
+    - name: prod-second-x86_64
+      max_concurrent_builds: 16
+      openshift_url: https://my-second-x86_64-cluster.fedoraproject.org
+      # optional params, and their defaults:
+      enabled: true # yaml boolean
+      namespace: worker
+      use_auth: 'true' # yaml string
+      verify_ssl: 'true' # yaml string
 
-      ppc64le:
-        - name: prod-ppc64le
-          max_concurrent_builds: 6
-          openshift_url: https://my-ppc64le-cluster.fedoraproject.org:8443
+  ppc64le:
+    - name: prod-ppc64le
+      max_concurrent_builds: 6
+      openshift_url: https://my-ppc64le-cluster.fedoraproject.org:8443
 
-    # Reactor config maps to be created in orchestrator namespace
-    osbs_reactor_config_maps:
-    - name: reactor-config-map
-      # See config.json schema in atomic-reactor project for details:
-      # https://github.com/containerbuildsystem/atomic-reactor/blob/master/atomic_reactor/schemas/config.json
-      data:
-        clusters:
-            x86_64:
-            -   enabled: true
-                max_concurrent_builds: 10
-                name: x86_64-on-premise
-        version: 1
+# Reactor config maps to be created in orchestrator namespace
+osbs_reactor_config_maps:
+- name: reactor-config-map
+  # See config.json schema in atomic-reactor project for details:
+  # https://github.com/containerbuildsystem/atomic-reactor/blob/master/atomic_reactor/schemas/config.json
+  data:
+    clusters:
+        x86_64:
+        -   enabled: true
+            max_concurrent_builds: 10
+            name: x86_64-on-premise
+    version: 1
 
-    # Service accounts to be created - these accounts will also be bound to
-    # edit clusterrole and osbs-custom-build role in specified namespace
-    osbs_service_accounts:
-    - bot
-    - ci
+# Service accounts to be created - these accounts will also be bound to
+# edit clusterrole and osbs-custom-build role in specified namespace
+osbs_service_accounts:
+- bot
+- ci
 
-    # Users and groups to be assigned view clusterrole in specified namespace
-    osbs_readonly_groups:
-    - group1
-    - group2
-    osbs_readonly_users:
-    - user1
-    - user2
+# Users and groups to be assigned view clusterrole in specified namespace
+osbs_readonly_groups:
+- group1
+- group2
+osbs_readonly_users:
+- user1
+- user2
 
-    # Users and groups to be assigned edit clusterrole and osbs-custom-build
-    # role in specified namespace
-    osbs_readwrite_groups:
-    - group1
-    - group2
-    osbs_readwrite_users:
-    - user1
-    - user2
+# Users and groups to be assigned edit clusterrole and osbs-custom-build
+# role in specified namespace
+osbs_readwrite_groups:
+- group1
+- group2
+osbs_readwrite_users:
+- user1
+- user2
 
-    # Users and groups to be assigned admin clusterrole and osbs-custom-build
-    # role in specified namespace
-    osbs_admin_groups:
-    - group1
-    - group2
-    osbs_admin_users:
-    - user1
-    - user2
+# Users and groups to be assigned admin clusterrole and osbs-custom-build
+# role in specified namespace
+osbs_admin_groups:
+- group1
+- group2
+osbs_admin_users:
+- user1
+- user2
 
-    # Users and groups to be assigned cluster-reader clusterrole cluster wide
-    osbs_cluster_reader_groups:
-    - group1
-    - group2
-    osbs_cluster_reader_users:
-    - user1
-    - user2
+# Users and groups to be assigned cluster-reader clusterrole cluster wide
+osbs_cluster_reader_groups:
+- group1
+- group2
+osbs_cluster_reader_users:
+- user1
+- user2
 
-    # Pruning
-    osbs_pruner_image: openshift3/ose
-    osbs_pruner_command_build:
-    - /usr/bin/oc
-    - adm
-    - prune
-    - builds
-    - --orphans=true
-    - --confirm
-    osbs_pruner_schedule_build: "0 0 * * *"
-    # Automatically prunes pods from CronJobs
-    osbs_pruner_successful_jobs: 5
-    osbs_pruner_failed_jobs: 5
-    # Define this variable to enable pruning: account will be created if absent
-    osbs_pruner_serviceaccount: pruner
-    # Which cluster-role to grant to the service account
-    osbs_pruner_clusterrole_build: system:openshift:controller:build-controller
+# Pruning
+osbs_pruner_image: openshift3/ose
+osbs_pruner_command_build:
+- /usr/bin/oc
+- adm
+- prune
+- builds
+- --orphans=true
+- --confirm
+osbs_pruner_schedule_build: "0 0 * * *"
+# Automatically prunes pods from CronJobs
+osbs_pruner_successful_jobs: 5
+osbs_pruner_failed_jobs: 5
+# Define this variable to enable pruning: account will be created if absent
+osbs_pruner_serviceaccount: pruner
+# Which cluster-role to grant to the service account
+osbs_pruner_clusterrole_build: system:openshift:controller:build-controller
+```
 
-For a full list, see defaults/main.yml
+For a full list, see [main.yml][]
 
-Dependencies
-------------
+## Dependencies
 
 None.
 
-Example Playbook
-----------------
+## Example Playbook
 
-    - name: setup worker namespace
-      hosts: master
-      roles:
-         - role: osbs-namespace
-           osbs_namespace: worker
+```yaml
+- name: setup worker namespace
+  hosts: master
+  roles:
+      - role: osbs-namespace
+        osbs_namespace: worker
 
-    - name: setup orchestrator namespace
-      hosts: master
-      roles:
-         - role: osbs-namespace
-           osbs_namespace: orchestrator
-           osbs_orchestrator: true
+- name: setup orchestrator namespace
+  hosts: master
+  roles:
+      - role: osbs-namespace
+        osbs_namespace: orchestrator
+        osbs_orchestrator: true
+```
 
-License
--------
+## License
 
 BSD
 
-Author Information
-------------------
+## Author Information
 
 Luiz Carvalho <lui@redhat.com>
+
+[main.yml]: ./defaults/main.yml

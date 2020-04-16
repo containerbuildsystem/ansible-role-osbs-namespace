@@ -1,19 +1,17 @@
-ansible-role-osbs-namespace/operations
-======================================
+# Operations
 
-Collection of common maintenance operations for an OpenShift cluster.
+A collection of common maintenance operations for an OpenShift cluster.
+
 By default, all tasks in this sub-roles are disabled. Use the control
 booleans to enable the desired operations:
 
-Requirements
-------------
+## Requirements
 
 A running instance of OpenShift.
 
-Role Variables
---------------
+## Role Variables
 
-
+```yaml
     # Update docker daemon on each OpenShift node.
     # It's highly recommended to use `serial: 1` in your playbook.
     osbs_upgrade_docker: false
@@ -37,18 +35,18 @@ Role Variables
 
     # Override default systemd unit files
     osbs_systemd_override: true
+```
 
-See `operations/defaults/main.yml` for a comprehensive list of all
+See [main.yml][] for a comprehensive list of all
 available variables.
 
-Dependencies
-------------
+## Dependencies
 
 None.
 
-Example Playbook
-----------------
+## Example Playbook
 
+```yaml
     - name: update docker
       hosts: nodes
       roles:
@@ -64,13 +62,14 @@ Example Playbook
           - role: my-maintenance-role
           - role: ansible-role-osbs-namespace/operations
             osbs_enable_node: true
+```
 
-License
--------
+## License
 
 BSD
 
-Author Information
-------------------
+## Author Information
 
 Luiz Carvalho <lui@redhat.com>
+
+[main.yml]: ./defaults/main.yml
