@@ -17,6 +17,6 @@ spec:
           - name: build-pruner
             image: "{{ osbs_generic_cronjob_image }}"
 
-            {% if osbs_generic_cronjob_command %}command: {{ osbs_generic_cronjob_command }}{% endif %}
+            {% if osbs_generic_cronjob_command %}command: [{{ osbs_generic_cronjob_command | join(', ')}}] {% endif %}
 
           restartPolicy: OnFailure
