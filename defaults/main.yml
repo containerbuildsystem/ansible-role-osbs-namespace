@@ -11,6 +11,7 @@ osbs_is_admin: true
 osbs_service_accounts: []
 
 osbs_cpu_limitrange: ''
+osbs_memory_limitrange: ''
 
 osbs_admin_groups: []
 osbs_admin_users: []
