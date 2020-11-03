@@ -8,6 +8,5 @@ spec:
   - type: Container
     defaultRequest:
       cpu: {{ osbs_cpu_limitrange }}
-      {% if osbs_memory_limitrange %}
-      memory: {{ osbs_memory_limitrange }}
-      {% endif %}
+      {% if osbs_memory_limitrange %}memory: {{ osbs_memory_limitrange }}{% endif %}
+
