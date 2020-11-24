@@ -11,8 +11,9 @@ autorebuild_imagestream_tags=$(
 
 delete_threshold=$(date --date="7 days ago" --iso-8601=seconds --utc)
 
+# chunk-size=0 is required to get all tags when there is a lot of tags
 old_imagestream_tags=$(
-    $OC get imagestreamtags -o json | \
+    $OC get imagestreamtags --chunk-size=0 -o json | \
     jq '.items[].metadata | select(.creationTimestamp < "'${delete_threshold}'") | .name' -r | \
     sort -u
 )
@@ -36,4 +37,4 @@ echo
 count=$(wc -l <<<${unwanted_imagestream_tags})
 echo "SUMMARY: ${count} ImageStreamTags will be removed"
 
-$OC delete imagestreamtags ${unwanted_imagestream_tags}
+echo ${unwanted_imagestream_tags} | xargs -n 10 $OC delete imagestreamtags
