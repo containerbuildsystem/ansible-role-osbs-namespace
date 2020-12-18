@@ -105,7 +105,7 @@ Role Variables
     - user2
 
     # Pruning
-    osbs_pruner_image: openshift3/ose
+    osbs_pruner_custom_image: openshift3/ose
     osbs_pruner_command_build:
     - /usr/bin/oc
     - adm

@@ -162,11 +162,11 @@
   tags:
   - oc
 
+- include: pruner_worker_and_orchestrator.yml
+  when: "osbs_pruner_serviceaccount is defined"
+
 - include: orchestrator.yml
   when: osbs_orchestrator
 
-- include: pruner.yml
-  when: "osbs_pruner_serviceaccount is defined"
-
-- include: remove-unused-istags.yaml
-  when: "osbs_remove_unused_istags_serviceaccount is defined"
+- include: pruner_worker.yml
+  when: not osbs_orchestrator and "osbs_pruner_serviceaccount is defined"
