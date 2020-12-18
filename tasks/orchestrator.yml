@@ -62,3 +62,6 @@
   failed_when: ('imported with errors' in imagestream_tag_updated.stdout)
   tags:
   - oc
+
+- include: pruner_orchestrator.yml
+  when: "osbs_pruner_serviceaccount is defined"

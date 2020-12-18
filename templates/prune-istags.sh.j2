@@ -9,7 +9,7 @@ autorebuild_imagestream_tags=$(
     sort -u
 )
 
-delete_threshold=$(date --date="7 days ago" --iso-8601=seconds --utc)
+delete_threshold=$(date --date="{{ osbs_pruner_istags_days_old }} days ago" --iso-8601=seconds --utc)
 
 # chunk-size=0 is required to get all tags when there is a lot of tags
 old_imagestream_tags=$(

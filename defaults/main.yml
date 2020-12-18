@@ -35,41 +35,51 @@ osbs_buildroot_imagestream_live_tag: ''
 osbs_reactor_config_maps: []
 
 osbs_cronjob_api_version: batch/v2alpha1
-
-osbs_pruner_image: openshift3/ose
-osbs_pruner_command_build:
-- /usr/bin/oc
-- adm
-- prune
-- "--namespace={{ osbs_namespace }}"
-- builds
-- --orphans=true
-- --keep-complete=3
-- --confirm
-osbs_pruner_old_builds_command_build:
-- /usr/bin/oc
-- adm
-- prune
-- "--namespace={{ osbs_namespace }}"
-- builds
-- --orphans=true
-- --keep-younger-than=720h
-- --keep-complete=0
-- --keep-failed=0
-- --confirm
+osbs_pruner_builds_keep_complete: 1
+osbs_pruner_builds_keep_younger: '72h'
+osbs_pruner_config_maps_days_old: 1
+osbs_pruner_istags_days_old: 1
+osbs_pruner_pods_days_old: 1
 osbs_pruner_schedule_build: "0 0 * * *"
-osbs_pruner_old_builds_schedule_build: "0 2 * * *"
+osbs_pruner_schedule_imagestreams: "0 1 * * 0"
+osbs_pruner_schedule_pods: "0 2 * * *"
+osbs_pruner_schedule_istags: "0 3 * * *"
+osbs_pruner_schedule_configmaps: "0 3 * * *"
+osbs_pruner_schedule_buildconfigs: "0 3 * * 0"
 osbs_pruner_successful_jobs: 5
 osbs_pruner_failed_jobs: 5
 osbs_pruner_build_clusterrole_read: system:openshift:controller:build-config-change-controller
 osbs_pruner_build_role_delete: edit
 
 # You need to provide an image that contains oc and jq commands
-osbs_remove_unused_istags_image: ''
-osbs_remove_unused_istags_command:
+osbs_pruner_custom_image: ''
+
+osbs_pruner_command_build:
 - /bin/bash
 - -c
-- "{{ lookup('template', 'remove-unused-istags.sh.j2') }}"
-osbs_remove_unused_istags_schedule_build: "5 0 * * *"
-osbs_remove_unused_istags_successful_jobs: 5
-osbs_remove_unused_istags_failed_jobs: 5
+- "{{ lookup('template', 'prune-builds.sh.j2') }}"
+
+osbs_pruner_command_istags:
+- /bin/bash
+- -c
+- "{{ lookup('template', 'prune-istags.sh.j2') }}"
+
+osbs_pruner_command_pods:
+- /bin/bash
+- -c
+- "{{ lookup('template', 'prune-pods.sh.j2') }}"
+
+osbs_pruner_command_configmaps:
+- /bin/bash
+- -c
+- "{{ lookup('template', 'prune-config-maps.sh.j2') }}"
+
+osbs_pruner_command_buildconfigs:
+- /bin/bash
+- -c
+- "{{ lookup('template', 'prune-build-configs.sh.j2') }}"
+
+osbs_pruner_command_imagestreams:
+- /bin/bash
+- -c
+- "{{ lookup('template', 'prune-imagestreams.sh.j2') }}"
