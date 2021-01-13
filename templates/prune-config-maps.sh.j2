@@ -22,4 +22,4 @@ echo
 count=$(wc -l <<<${old_config_maps})
 echo "SUMMARY: ${count} ConfigMaps will be removed"
 
-echo ${old_config_maps} | xargs -n 10 $OC configmap pod
+echo ${old_config_maps} | xargs -n 10 $OC delete configmap
