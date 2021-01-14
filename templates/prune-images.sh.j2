@@ -1,0 +1,6 @@
+#!/bin/bash
+set -exuo pipefail
+
+OC='oc -n {{ osbs_namespace }}'
+
+oc adm prune images --keep-tag-revisions={{ osbs_pruner_images_keep_rev }} --keep-younger-than={{ osbs_pruner_images_keep_younger }} --confirm
