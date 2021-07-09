@@ -79,14 +79,6 @@
     users: "{{ osbs_admin_users }}"
     groups: "{{ osbs_admin_groups }}"
 
-  - name: osbs-readwrite-serviceaccounts
-    role: edit
-    serviceaccounts: "{{ osbs_service_accounts }}"
-
-  - name: osbs-custom-build-serviceaccounts
-    role: system:build-strategy-custom
-    serviceaccounts: "{{ osbs_service_accounts }}"
-
   - name: osbs-cluster-reader
     role: cluster-reader
     yaml_version: v1
