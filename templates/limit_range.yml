@@ -1,0 +1,38 @@
+kind: LimitRange
+apiVersion: v1
+metadata:
+  name: limits
+  namespace: "{{ osbs_ocp_namespace }}"
+  labels:
+    tenant.paas.redhat.com/tenant: "{{ container_build_tenant }}"
+spec:
+  limits:
+#    - type: openshift.io/ImageStream
+#      max:
+#        openshift.io/image-tags: 1k
+#        openshift.io/images: 1k
+    - type: Pod
+      max:
+        cpu: "{{ osbs_cpu_max }}"
+        memory: "{{ osbs_memory_max }}"
+      min:
+        cpu: 5m
+        memory: 6Mi
+    - type: Container
+      max:
+        cpu: "{{ osbs_cpu_max }}"
+        memory: "{{ osbs_memory_max }}"
+      min:
+        cpu: 5m
+        memory: 4Mi
+#      default:
+#        cpu: 500m
+#        memory: 512Mi
+#      defaultRequest:
+#        cpu: 25m
+#        memory: 256Mi
+#      maxLimitRequestRatio:
+#        cpu: '100'
+    - type: openshift.io/Image
+      max:
+        storage: "{{ osbs_max_storage }}"

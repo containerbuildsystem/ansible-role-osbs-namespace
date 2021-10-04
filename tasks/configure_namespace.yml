@@ -1,0 +1,151 @@
+---
+- name: Create service accounts
+  k8s:
+    state: present
+    definition:
+      kind: ServiceAccount
+      apiVersion: v1
+      metadata:
+        name: "{{ item }}"
+        namespace: "{{ osbs_ocp_namespace }}"
+  with_items:
+    - "{{ osbs_list_sa }}"
+  tags:
+  - deployment-sa
+
+
+- name: Create rolebindings for service accounts
+  k8s:
+    state: present
+    definition:
+      kind: RoleBinding
+      apiVersion: rbac.authorization.k8s.io/v1
+      metadata:
+        name: "{{ item.sa_name }}-rolebinding"
+        namespace: "{{ osbs_ocp_namespace }}"
+      subjects:
+        - kind: ServiceAccount
+          name: "{{ item.sa_name }}"
+          namespace: "{{ osbs_ocp_namespace }}"
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: "{{ item.role }}"
+  with_items:
+    - "{{ osbs_list_of_dict_sa_with_roles }}"
+  tags:
+  - deployment-sa
+
+
+- name: "Create secrets"
+  no_log: true
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      type: "{{ item.type }}"
+      metadata:
+        name: "{{ item.name }}"
+        namespace: "{{ osbs_ocp_namespace }}"
+      data:
+        "{{ item.data }}"
+  with_items:
+    - "{{ osbs_list_of_dict_secrets }}"
+  tags:
+  - osbs-secrets
+
+
+# TODO: Cluster role: Admin does not have permissions to create/adjust limitranges!
+- name: Add limitrange for namespace
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'templates/limit_range.yml') | from_yaml }}"
+    validate:
+      fail_on_error: no
+      strict: yes
+  tags:
+  - limit-range
+
+
+- name: Create configmaps
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      data:
+        config.yaml: |
+          {{ item.data | to_nice_yaml }}
+      kind: ConfigMap
+      metadata:
+        name: "{{ item.name }}"
+        namespace: "{{ osbs_ocp_namespace }}"
+  with_items: "{{ osbs_reactor_config_maps }}"
+  tags:
+  - configmaps
+
+
+# TODO: When definitions are available in atomic-reactor
+- name: Create Pipeline from definition stored in repository
+  k8s:
+    definition: '{{ item }}'
+    namespace: "{{ osbs_ocp_namespace }}"
+  with_items: '{{ lookup("url", "{{ osbs_a_r_pipeline_definition }}", split_lines=False) | from_yaml_all | list }}'
+  when: item is not none
+  tags:
+  - pipeline-task-definitions
+
+
+# TODO: When definitions are available in atomic-reactor
+- name: Create Tasks from definition stored in repository
+  k8s:
+    definition: '{{ item }}'
+    namespace: "{{ osbs_ocp_namespace }}"
+  with_items: '{{ lookup("url", "{{ osbs_a_r_pipeline_tasks }}", split_lines=False) | from_yaml_all | list }}'
+  when: item is not none
+  tags:
+  - pipeline-task-definitions
+
+
+# TODO: Cluster role: Admin does not have permissions to create/adjust limitranges!
+- name: Create clean up cronjobs
+  k8s:
+    state: present
+    definition:
+      apiVersion: batch/v1
+      kind: Job
+      metadata:
+        name: "{{ item.name }}"
+        namespace: "{{ osbs_ocp_namespace }}"
+      spec:
+        backoffLimit: 6
+        completions: 1
+        parallelism: 1
+        template:
+          spec:
+            containers:
+              - command:
+                  - /bin/bash
+                  - '-c'
+                  - >
+                  - "{{ item.template }}"
+                image: "{{ cronjob_image }}"
+                imagePullPolicy: IfNotPresent
+                name: build-pruner
+                resources: {}
+                terminationMessagePath: /dev/termination-log
+                terminationMessagePolicy: File
+            dnsPolicy: ClusterFirst
+            restartPolicy: OnFailure
+            schedulerName: default-scheduler
+            securityContext: {}
+            # serviceAccount: pruner
+            # serviceAccountName: pruner
+            terminationGracePeriodSeconds: 30
+  with_items:
+    - { name: "pod-pruner", template: "{{ lookup('template', 'templates/pod_pruner.sh') }}"}
+  tags:
+  - cronjobs
+
+
+# TODO cron jobs to clean up PipelineRuns and TaskRuns
