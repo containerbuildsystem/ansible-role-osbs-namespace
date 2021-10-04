@@ -1,2 +1,0 @@
-[masters]
-test-host ansible_connection=local ansible_become=false
