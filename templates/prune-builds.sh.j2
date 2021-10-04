@@ -1,8 +1,0 @@
-#!/bin/bash
-set -exuo pipefail
-
-OC='oc -n {{ osbs_namespace }}'
-
-$OC adm prune builds --orphans=true --keep-complete={{ osbs_pruner_builds_keep_complete }} --confirm
-
-$OC adm prune builds --orphans=true --keep-younger-than={{ osbs_pruner_builds_keep_younger }} --keep-complete=0 --keep-failed=0 --confirm
