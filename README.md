@@ -2,54 +2,27 @@ osbs-namespace
 ==============
 
 Setup an OpenShift namespace as required by OSBS:
-- Create namespace, also referred to as project (`osbs_namespace`)
-- Create service accounts (`osbs_service_accounts`)
+- Create namespace, also referred to as project (`osbs_ocp_namespace`)
+- Create service accounts (`osbs_list_sa`)
+- Create policy role bindings
+- Sets up rolebindings for specified service accounts (`osbs_list_of_dict_sa_with_roles`)
+- Create secrets (`osbs_list_of_dict_secrets`)
+- Create configmaps (`osbs_reactor_config_maps`)
+- Create limit-ranges
+- Create cronjobs
+- Create Pipeline and Tasks
 
-If user is cluster admin (`osbs_is_admin`), the following is also performed:
-- Create policy binding
-- Create osbs-custom-build role to allow custom builds
-- Sets up rolebindings for specified users, groups and service accounts
-
-For orchestrator namespaces (`osbs_orchestrator`):
-- client-config-secret is generated and stored in `osbs_generated_config_path`
-  use osbs-secret to import it
-- reactor-config-map ConfigMap is generated
 
 Requirements
 ------------
 
-A running instance of OpenShift.
+A running instance of OpenShift with created namespaces and policy role bindings for admins/developers.
 
 Role Variables
 --------------
 
     # Namespace name to be used
-    osbs_namespace: 'my-namespace'
-    # Is user running playbook as cluster admin?
-    osbs_is_admin: true
-    # Will the namespace be used for orchestrator builds?
-    osbs_orchestrator: true
-
-    # Worker clusters to be used for generating reactor and client config secrets
-    # in orchestrator workspace
-    osbs_worker_clusters:
-      x86_64:
-        - name: prod-first-x86_64
-          max_concurrent_builds: 6
-          openshift_url: https://my-first-x86_64-cluster.fedoraproject.org:8443
-        - name: prod-second-x86_64
-          max_concurrent_builds: 16
-          openshift_url: https://my-second-x86_64-cluster.fedoraproject.org
-          # optional params, and their defaults:
-          enabled: true # yaml boolean
-          namespace: worker
-          use_auth: 'true' # yaml string
-          verify_ssl: 'true' # yaml string
-
-      ppc64le:
-        - name: prod-ppc64le
-          max_concurrent_builds: 6
-          openshift_url: https://my-ppc64le-cluster.fedoraproject.org:8443
+    osbs_ocp_namespace: 'my-namespace'
 
     # Reactor config maps to be created in orchestrator namespace
     osbs_reactor_config_maps:
@@ -64,65 +37,30 @@ Role Variables
                 name: x86_64-on-premise
         version: 1
 
-    # Service accounts to be created - these accounts will also be bound to
-    # edit clusterrole and osbs-custom-build role in specified namespace
-    osbs_service_accounts:
+    # Service accounts to be created
+    osbs_list_sa:
     - bot
     - ci
 
-    # Users and groups to be assigned view clusterrole in specified namespace
-    osbs_readonly_groups:
-    - group1
-    - group2
-    osbs_readonly_users:
-    - user1
-    - user2
+    # Secrets to be created
+    osbs_list_of_dict_secrets:
+    - { name: "example_secret", data: "secret_data", type: "Opaque"}
 
-    # Users and groups to be assigned edit clusterrole and osbs-custom-build
-    # role in specified namespace
-    osbs_readwrite_groups:
-    - group1
-    - group2
-    osbs_readwrite_users:
-    - user1
-    - user2
+    # Policy role bindings for service accounts to be set
+    osbs_list_of_dict_sa_with_roles:
+    - { sa_name: 'bot', role: 'view' }
 
-    # Users and groups to be assigned admin clusterrole and osbs-custom-build
-    # role in specified namespace
-    osbs_admin_groups:
-    - group1
-    - group2
-    osbs_admin_users:
-    - user1
-    - user2
+    # The maximum amount of CPU that a pod can request on a node across all containers
+    osbs_cpu_max: 1000m
 
-    # Users and groups to be assigned cluster-reader clusterrole cluster wide
-    osbs_cluster_reader_groups:
-    - group1
-    - group2
-    osbs_cluster_reader_users:
-    - user1
-    - user2
+    # The maximum amount of memory that a pod can request on a node across all containers
+    osbs_memory_max: 3Gi
 
-    # Pruning
-    osbs_pruner_custom_image: openshift3/ose
-    osbs_pruner_command_build:
-    - /usr/bin/oc
-    - adm
-    - prune
-    - builds
-    - --orphans=true
-    - --confirm
-    osbs_pruner_schedule_build: "0 0 * * *"
-    # Automatically prunes pods from CronJobs
-    osbs_pruner_successful_jobs: 5
-    osbs_pruner_failed_jobs: 5
-    # Define this variable to enable pruning: account will be created if absent
-    osbs_pruner_serviceaccount: pruner
-    # Which cluster-role to grant to the service account
-    osbs_pruner_clusterrole_build: system:openshift:controller:build-controller
+    # The maximum size of an image that can be pushed to an internal registry
+    osbs_max_storage: 2Gi
 
-For a full list, see defaults/main.yml
+    # Delete threshold counted in days to clean up old pods
+    osbs_pruner_pods_days_old: 10
 
 Dependencies
 ------------
@@ -132,18 +70,14 @@ None.
 Example Playbook
 ----------------
 
-    - name: setup worker namespace
+    - name: Setup namespace
       hosts: master
       roles:
-         - role: osbs-namespace
-           osbs_namespace: worker
-
-    - name: setup orchestrator namespace
-      hosts: master
-      roles:
-         - role: osbs-namespace
-           osbs_namespace: orchestrator
-           osbs_orchestrator: true
+      - role: ansible-role-osbs-namespace
+      environment:
+        K8S_AUTH_API_KEY: "{{ osbs_ocp_token }}"
+        K8S_AUTH_HOST: "{{ osbs_ocp_host }}"
+        K8S_AUTH_VERIFY_SSL: "{{ osbs_ocp_verify_ssl }}"
 
 License
 -------
@@ -153,4 +87,4 @@ BSD
 Author Information
 ------------------
 
-Luiz Carvalho <lui@redhat.com>
+Ladislav Kolacek <lkolacek@redhat.com>
