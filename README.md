@@ -62,6 +62,12 @@ Role Variables
     # Delete threshold counted in days to clean up old pods
     osbs_pruner_pods_days_old: 10
 
+    # List of URLs to yaml files with task definitions
+    osbs_tasks_definitions
+
+    # List of URLs to yaml files with pipeline definitions
+    osbs_pipelines_definitions
+
 Dependencies
 ------------
 
