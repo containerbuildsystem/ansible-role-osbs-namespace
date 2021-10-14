@@ -62,7 +62,7 @@
     state: present
     definition: "{{ lookup('template', 'templates/limit_range.yml') | from_yaml }}"
     validate:
-      fail_on_error: no
+      fail_on_error: yes
       strict: yes
   tags:
   - limit-range
@@ -85,29 +85,34 @@
   - configmaps
 
 
-# TODO: When definitions are available in atomic-reactor
-- name: Create Pipeline from definition stored in repository
+- name: Deploy pipeline tasks
   k8s:
-    definition: '{{ item }}'
+    state: present
+    apply: yes
     namespace: "{{ osbs_ocp_namespace }}"
-  with_items: '{{ lookup("url", "{{ osbs_a_r_pipeline_definition }}", split_lines=False) | from_yaml_all | list }}'
-  when: item is not none
+    definition: "{{ lookup('url', '{{ item }}', split_lines=False) | from_yaml_all | list }}"
+    validate:
+      fail_on_error: yes
+      strict: yes
+  with_items: "{{ osbs_tasks_definitions }}"
   tags:
-  - pipeline-task-definitions
+  - tasks
 
 
-# TODO: When definitions are available in atomic-reactor
-- name: Create Tasks from definition stored in repository
+- name: Deploy pipelines
   k8s:
-    definition: '{{ item }}'
+    state: present
+    apply: yes
     namespace: "{{ osbs_ocp_namespace }}"
-  with_items: '{{ lookup("url", "{{ osbs_a_r_pipeline_tasks }}", split_lines=False) | from_yaml_all | list }}'
-  when: item is not none
+    definition: "{{ lookup('url', '{{ item }}', split_lines=False) | from_yaml_all | list }}"
+    validate:
+      fail_on_error: yes
+      strict: yes
+  with_items: "{{ osbs_pipelines_definitions }}"
   tags:
-  - pipeline-task-definitions
+  - pipelines
 
 
-# TODO: Cluster role: Admin does not have permissions to create/adjust limitranges!
 - name: Create clean up cronjobs
   k8s:
     state: present
