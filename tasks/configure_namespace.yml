@@ -61,9 +61,6 @@
   k8s:
     state: present
     definition: "{{ lookup('template', 'templates/limit_range.yml') | from_yaml }}"
-    validate:
-      fail_on_error: yes
-      strict: yes
   tags:
   - limit-range
 
@@ -91,9 +88,6 @@
     apply: yes
     namespace: "{{ osbs_ocp_namespace }}"
     definition: "{{ lookup('url', '{{ item }}', split_lines=False) | from_yaml_all | list }}"
-    validate:
-      fail_on_error: yes
-      strict: yes
   with_items: "{{ osbs_tasks_definitions }}"
   tags:
   - tasks
@@ -105,9 +99,6 @@
     apply: yes
     namespace: "{{ osbs_ocp_namespace }}"
     definition: "{{ lookup('url', '{{ item }}', split_lines=False) | from_yaml_all | list }}"
-    validate:
-      fail_on_error: yes
-      strict: yes
   with_items: "{{ osbs_pipelines_definitions }}"
   tags:
   - pipelines
