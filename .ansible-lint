@@ -1,0 +1,13 @@
+exclude_paths:
+  - .cache/
+  - .github/
+
+skip_list:
+  - var-naming
+
+enable_list:
+  - yaml  # log a runtime failure if yammllint is not installed
+
+kinds:
+  - tasks: "**/tasks/*.yml"
+  - meta: "**/meta/main.yml"

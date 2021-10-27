@@ -1,4 +1,4 @@
 *.pyc
-
 /tests/test.retry
 /tests/tmp
+.cache
