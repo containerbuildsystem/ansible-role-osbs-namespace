@@ -11,7 +11,7 @@
   with_items:
     - "{{ osbs_list_sa }}"
   tags:
-  - deployment-sa
+    - deployment-sa
 
 
 - name: Create rolebindings for service accounts
@@ -34,7 +34,7 @@
   with_items:
     - "{{ osbs_list_of_dict_sa_with_roles }}"
   tags:
-  - deployment-sa
+    - deployment-sa
 
 
 - name: "Create secrets"
@@ -53,7 +53,7 @@
   with_items:
     - "{{ osbs_list_of_dict_secrets }}"
   tags:
-  - osbs-secrets
+    - osbs-secrets
 
 
 # TODO: Cluster role: Admin does not have permissions to create/adjust limitranges!
@@ -62,7 +62,7 @@
     state: present
     definition: "{{ lookup('template', 'templates/limit_range.yml') | from_yaml }}"
   tags:
-  - limit-range
+    - limit-range
 
 
 - name: Create configmaps
@@ -79,29 +79,29 @@
         namespace: "{{ osbs_ocp_namespace }}"
   with_items: "{{ osbs_reactor_config_maps }}"
   tags:
-  - configmaps
+    - configmaps
 
 
 - name: Deploy pipeline tasks
   k8s:
     state: present
-    apply: yes
+    apply: true
     namespace: "{{ osbs_ocp_namespace }}"
     definition: "{{ lookup('url', '{{ item }}', split_lines=False) | from_yaml_all | list }}"
   with_items: "{{ osbs_tasks_definitions }}"
   tags:
-  - tasks
+    - tasks
 
 
 - name: Deploy pipelines
   k8s:
     state: present
-    apply: yes
+    apply: true
     namespace: "{{ osbs_ocp_namespace }}"
     definition: "{{ lookup('url', '{{ item }}', split_lines=False) | from_yaml_all | list }}"
   with_items: "{{ osbs_pipelines_definitions }}"
   tags:
-  - pipelines
+    - pipelines
 
 
 - name: Create PipelineRun cleaning CronJob
@@ -134,7 +134,7 @@
                         memory: 256Mi
                 restartPolicy: OnFailure
   tags:
-  - pipeline-pruner
+    - pipeline-pruner
 
 
 - name: Create Pod cleaning CronJob
@@ -170,6 +170,6 @@
                         memory: 256Mi
                 restartPolicy: OnFailure
   with_items:
-    - { name: "pod-pruner", template: "{{ lookup('template', 'templates/pod_pruner.sh') }}"}
+    - {name: "pod-pruner", template: "{{ lookup('template', 'templates/pod_pruner.sh') }}"}
   tags:
-  - cronjobs
+    - cronjobs
