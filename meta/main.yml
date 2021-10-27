@@ -1,12 +1,14 @@
 # Standards: 1.8
 galaxy_info:
+  role_name: osbs_namespace
+  namespace: containerbuildsystem
   author: Luiz Carvalho
   description: Setup OpenShift namespace for OSBS usage
   company: Red Hat, Inc.
   license: BSD
   min_ansible_version: 2.1
   platforms:
-    name: EL
-    versions:
-    - 7
+    - name: EL
+      versions:
+        - 7
 dependencies: []

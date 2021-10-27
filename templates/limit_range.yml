@@ -7,10 +7,10 @@ metadata:
     tenant.paas.redhat.com/tenant: "{{ container_build_tenant }}"
 spec:
   limits:
-#    - type: openshift.io/ImageStream
-#      max:
-#        openshift.io/image-tags: 1k
-#        openshift.io/images: 1k
+    # - type: openshift.io/ImageStream
+    #   max:
+    #     openshift.io/image-tags: 1k
+    #     openshift.io/images: 1k
     - type: Pod
       max:
         cpu: "{{ osbs_cpu_max }}"
@@ -25,14 +25,14 @@ spec:
       min:
         cpu: 5m
         memory: 4Mi
-#      default:
-#        cpu: 500m
-#        memory: 512Mi
-#      defaultRequest:
-#        cpu: 25m
-#        memory: 256Mi
-#      maxLimitRequestRatio:
-#        cpu: '100'
+        # default:
+        #   cpu: 500m
+        #   memory: 512Mi
+        # defaultRequest:
+        #   cpu: 25m
+        #   memory: 256Mi
+        # maxLimitRequestRatio:
+        #   cpu: '100'
     - type: openshift.io/Image
       max:
         storage: "{{ osbs_max_storage }}"
