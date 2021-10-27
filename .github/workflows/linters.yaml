@@ -1,0 +1,21 @@
+name: Linters
+
+on:
+  pull_request:
+
+  push:
+    branches:
+      - master
+      - release_*
+
+jobs:
+  ansible-lint:
+    name: ansible-lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+
+      - name: Run ansible-lint
+        uses: containerbuildsystem/actions/ansible-lint@master
