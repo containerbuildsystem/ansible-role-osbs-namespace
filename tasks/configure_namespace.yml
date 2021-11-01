@@ -137,40 +137,38 @@
   - pipeline-pruner
 
 
-- name: Create clean up cronjobs
+- name: Create Pod cleaning CronJob
   k8s:
     state: present
+    namespace: "{{ osbs_ocp_namespace }}"
     definition:
-      apiVersion: batch/v1
-      kind: Job
+      apiVersion: batch/v1beta1
+      kind: CronJob
       metadata:
         name: "{{ item.name }}"
-        namespace: "{{ osbs_ocp_namespace }}"
       spec:
-        backoffLimit: 6
-        completions: 1
-        parallelism: 1
-        template:
+        # hourly
+        schedule: "0 * * * *"
+        jobTemplate:
           spec:
-            containers:
-              - command:
-                  - /bin/bash
-                  - '-c'
-                  - >
-                  - "{{ item.template }}"
-                image: "{{ cronjob_image }}"
-                imagePullPolicy: IfNotPresent
-                name: build-pruner
-                resources: {}
-                terminationMessagePath: /dev/termination-log
-                terminationMessagePolicy: File
-            dnsPolicy: ClusterFirst
-            restartPolicy: OnFailure
-            schedulerName: default-scheduler
-            securityContext: {}
-            # serviceAccount: pruner
-            # serviceAccountName: pruner
-            terminationGracePeriodSeconds: 30
+            template:
+              spec:
+                serviceAccountName: "{{ osbs_pruner_sa }}"
+                containers:
+                  - name: "{{ item.name }}"
+                    image: "{{ cronjob_image }}"
+                    args:
+                      - /bin/sh
+                      - '-c'
+                      - "{{ item.template }}"
+                    resources:
+                      requests:
+                        cpu: 10m
+                        memory: 128Mi
+                      limits:
+                        cpu: 25m
+                        memory: 256Mi
+                restartPolicy: OnFailure
   with_items:
     - { name: "pod-pruner", template: "{{ lookup('template', 'templates/pod_pruner.sh') }}"}
   tags:
