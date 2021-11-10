@@ -114,8 +114,7 @@
       metadata:
         name: pipelinerun-cleaner
       spec:
-        # every 5 min
-        schedule: "*/5 * * * *"
+        schedule: "{{ pipeline_run_pruning_schedule }}"
         jobTemplate:
           spec:
             template:
