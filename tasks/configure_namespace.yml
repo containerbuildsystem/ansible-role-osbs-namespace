@@ -146,8 +146,7 @@
       metadata:
         name: "{{ item.name }}"
       spec:
-        # hourly
-        schedule: "0 * * * *"
+        schedule: "{{ pod_pruning_schedule }}"
         jobTemplate:
           spec:
             template:
