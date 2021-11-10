@@ -71,6 +71,9 @@ Role Variables
     # Pipeline run pruning schedule expression for cronjob
     pipeline_run_pruning_schedule
 
+    # Pod pruning schedule expression for cronjob
+    pod_pruning_schedule
+
 Dependencies
 ------------
 
