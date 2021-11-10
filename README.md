@@ -68,6 +68,9 @@ Role Variables
     # List of URLs to yaml files with pipeline definitions
     osbs_pipelines_definitions
 
+    # Pipeline run pruning schedule expression for cronjob
+    pipeline_run_pruning_schedule
+
 Dependencies
 ------------
 
