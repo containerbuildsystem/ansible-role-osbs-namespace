@@ -50,15 +50,6 @@ Role Variables
     osbs_list_of_dict_sa_with_roles:
     - { sa_name: 'bot', role: 'view' }
 
-    # The maximum amount of CPU that a pod can request on a node across all containers
-    osbs_cpu_max: 1000m
-
-    # The maximum amount of memory that a pod can request on a node across all containers
-    osbs_memory_max: 3Gi
-
-    # The maximum size of an image that can be pushed to an internal registry
-    osbs_max_storage: 2Gi
-
     # Delete threshold counted in days to clean up old pods
     osbs_pruner_pods_days_old: 10
 

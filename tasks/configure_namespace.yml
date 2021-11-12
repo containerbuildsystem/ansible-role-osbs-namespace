@@ -56,15 +56,6 @@
     - osbs-secrets
 
 
-# TODO: Cluster role: Admin does not have permissions to create/adjust limitranges!
-- name: Add limitrange for namespace
-  k8s:
-    state: present
-    definition: "{{ lookup('template', 'templates/limit_range.yml') | from_yaml }}"
-  tags:
-    - limit-range
-
-
 - name: Create configmaps
   k8s:
     state: present
