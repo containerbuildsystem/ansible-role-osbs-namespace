@@ -14,25 +14,25 @@
     - deployment-sa
 
 
-- name: Create rolebindings for service accounts
+- name: Create rolebindings
   k8s:
     state: present
     definition:
       kind: RoleBinding
       apiVersion: rbac.authorization.k8s.io/v1
       metadata:
-        name: "{{ item.sa_name }}-rolebinding"
+        name: "{{ item.name }}-rolebinding"
         namespace: "{{ osbs_ocp_namespace }}"
       subjects:
-        - kind: ServiceAccount
-          name: "{{ item.sa_name }}"
+        - kind: "{{ item.kind }}"
+          name: "{{ item.name }}"
           namespace: "{{ osbs_ocp_namespace }}"
       roleRef:
         apiGroup: rbac.authorization.k8s.io
         kind: ClusterRole
         name: "{{ item.role }}"
   with_items:
-    - "{{ osbs_list_of_dict_sa_with_roles }}"
+    - "{{ osbs_list_of_dict_rolebindings }}"
   tags:
     - deployment-sa
 

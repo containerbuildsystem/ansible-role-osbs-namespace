@@ -5,7 +5,7 @@ Setup an OpenShift namespace as required by OSBS:
 - Create namespace, also referred to as project (`osbs_ocp_namespace`)
 - Create service accounts (`osbs_list_sa`)
 - Create policy role bindings
-- Sets up rolebindings for specified service accounts (`osbs_list_of_dict_sa_with_roles`)
+- Sets up rolebindings (`osbs_list_of_dict_rolebindings`)
 - Create secrets (`osbs_list_of_dict_secrets`)
 - Create configmaps (`osbs_reactor_config_maps`)
 - Create limit-ranges
@@ -46,9 +46,12 @@ Role Variables
     osbs_list_of_dict_secrets:
     - { name: "example_secret", data: "secret_data", type: "Opaque"}
 
-    # Policy role bindings for service accounts to be set
-    osbs_list_of_dict_sa_with_roles:
-    - { sa_name: 'bot', role: 'view' }
+    # Policy role bindings to be set
+    osbs_list_of_dict_rolebindings:
+    - { name: 'bot', role: 'view', kind: 'ServiceAccount' }
+    - { name: 'admin_group', role: 'admin', kind: 'Group' }
+    - { name: 'super_user', role: 'admin', kind: 'User' }
+
 
     # Delete threshold counted in days to clean up old pods
     osbs_pruner_pods_days_old: 10
