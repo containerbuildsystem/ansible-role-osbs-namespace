@@ -103,7 +103,7 @@
       apiVersion: batch/v1beta1
       kind: CronJob
       metadata:
-        name: pipelinerun-cleaner
+        name: "{{ item.name }}"
       spec:
         schedule: "{{ pipeline_run_pruning_schedule }}"
         jobTemplate:
@@ -112,9 +112,12 @@
               spec:
                 serviceAccountName: "{{ osbs_pruner_sa }}"
                 containers:
-                  - name: tkn
-                    image: registry.redhat.io/openshift-pipelines/pipelines-cli-tkn-rhel8:0.19.0-2
-                    command: ["tkn", "pipelinerun", "delete", "-n", "{{ osbs_ocp_namespace }}", "-f", "--all"]
+                  - name: "{{ item.name }}"
+                    image: "{{ cronjob_image }}"
+                    args:
+                      - /bin/sh
+                      - '-c'
+                      - "{{ item.template }}"
                     resources:
                       requests:
                         cpu: 10m
@@ -123,8 +126,10 @@
                         cpu: 25m
                         memory: 256Mi
                 restartPolicy: OnFailure
+  with_items:
+    - {name: "pipelinerun-cleaner", template: "{{ lookup('template', 'templates/pipeline_run_pruner.sh') }}"}
   tags:
-    - pipeline-pruner
+    - cronjobs
 
 
 - name: Create Pod cleaning CronJob
