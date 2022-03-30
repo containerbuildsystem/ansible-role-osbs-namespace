@@ -71,6 +71,15 @@ Role Variables
     # Pod pruning schedule expression for cronjob
     pod_pruning_schedule
 
+    # Enable zombie slots pruner
+    zombie_slots_pruner_enabled
+
+    # Zombie slots pruning schedule expression for cronjob
+    zombie_slots_pruner_schedule
+
+    # Config map for zombie slots pruner
+    zombie_slots_pruner_rcm
+
 Dependencies
 ------------
 
