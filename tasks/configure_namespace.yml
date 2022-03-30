@@ -167,3 +167,52 @@
     - {name: "pod-pruner", template: "{{ lookup('template', 'templates/pod_pruner.sh') }}"}
   tags:
     - cronjobs
+
+
+- name: Create remote hosts zombie slots cleaning CronJob
+  k8s:
+    state: present
+    namespace: "{{ osbs_ocp_namespace }}"
+    definition:
+      apiVersion: batch/v1beta1
+      kind: CronJob
+      metadata:
+        name: "{{ item.name }}"
+      spec:
+        schedule: "{{ zombie_slots_pruner_schedule }}"
+        jobTemplate:
+          spec:
+            template:
+              spec:
+                serviceAccountName: "{{ osbs_pruner_sa }}"
+                containers:
+                  - name: "{{ item.name }}"
+                    image: "{{ cronjob_image }}"
+                    args:
+                      - "atomic-reactor"
+                      - job
+                      - "--config-file"
+                      - "/rcm/config.yaml"
+                      - "--namespace"
+                      - "{{ osbs_ocp_namespace }}"
+                      - "remote-hosts-unlocking-recovery"
+                    resources:
+                      requests:
+                        cpu: 10m
+                        memory: 128Mi
+                      limits:
+                        cpu: 25m
+                        memory: 256Mi
+                    volumeMounts:
+                      - name: reactor-config-map
+                        mountPath: /rcm
+                restartPolicy: OnFailure
+                volumes:
+                  - name: reactor-config-map
+                    configMap:
+                      name: "{{ zombie_slots_pruner_rcm }}"
+  when: zombie_slots_pruner_enabled
+  with_items:
+    - {name: "remote-host-zombie-pruner"}
+  tags:
+    - cronjobs
