@@ -206,11 +206,17 @@
                     volumeMounts:
                       - name: reactor-config-map
                         mountPath: /rcm
+                      - name: remote-host-auth
+                        mountPath: "{{ zombie_slots_pruner_remote_host_mount_path }}"
+
                 restartPolicy: OnFailure
                 volumes:
                   - name: reactor-config-map
                     configMap:
                       name: "{{ zombie_slots_pruner_rcm }}"
+                  - name: remote-host-auth
+                    secret:
+                      name: "{{ zombie_slots_pruner_remote_host_secret }}"
   when: zombie_slots_pruner_enabled
   with_items:
     - {name: "remote-host-zombie-pruner"}
