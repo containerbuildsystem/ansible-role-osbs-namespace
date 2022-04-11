@@ -80,6 +80,13 @@ Role Variables
     # Config map for zombie slots pruner
     zombie_slots_pruner_rcm
 
+    # remote host auth secret for zombie slots pruner
+    zombie_slots_pruner_remote_host_secret
+
+    # remote host auth mount path for zombie slots pruner,
+    # path to all auth keys in the config map
+    zombie_slots_pruner_remote_host_auth_mount_path
+
 Dependencies
 ------------
 
