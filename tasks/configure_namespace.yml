@@ -207,7 +207,7 @@
                       - name: reactor-config-map
                         mountPath: /rcm
                       - name: remote-host-auth
-                        mountPath: "{{ zombie_slots_pruner_remote_host_mount_path }}"
+                        mountPath: "{{ zombie_slots_pruner_remote_host_auth_mount_path }}"
 
                 restartPolicy: OnFailure
                 volumes:
