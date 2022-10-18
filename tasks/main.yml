@@ -1,2 +1,3 @@
 ---
-- include: configure_namespace.yml
+- name: Include tasks for configuring a namespace
+  ansible.builtin.include_tasks: configure_namespace.yml
