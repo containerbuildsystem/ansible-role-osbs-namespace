@@ -1,6 +1,6 @@
 ---
 - name: Create service accounts
-  k8s:
+  kubernetes.core.k8s:
     state: present
     definition:
       kind: ServiceAccount
@@ -15,7 +15,7 @@
 
 
 - name: Create rolebindings
-  k8s:
+  kubernetes.core.k8s:
     state: present
     definition:
       kind: RoleBinding
@@ -39,7 +39,7 @@
 
 - name: "Create secrets"
   no_log: true
-  k8s:
+  kubernetes.core.k8s:
     state: present
     definition:
       apiVersion: v1
@@ -57,7 +57,7 @@
 
 
 - name: Create configmaps
-  k8s:
+  kubernetes.core.k8s:
     state: present
     definition:
       apiVersion: v1
@@ -74,7 +74,7 @@
 
 
 - name: Deploy pipeline tasks
-  k8s:
+  kubernetes.core.k8s:
     state: present
     apply: true
     namespace: "{{ osbs_ocp_namespace }}"
@@ -85,7 +85,7 @@
 
 
 - name: Deploy pipelines
-  k8s:
+  kubernetes.core.k8s:
     state: present
     apply: true
     namespace: "{{ osbs_ocp_namespace }}"
@@ -96,7 +96,7 @@
 
 
 - name: Create PipelineRun cleaning CronJob
-  k8s:
+  kubernetes.core.k8s:
     state: present
     namespace: "{{ osbs_ocp_namespace }}"
     definition:
@@ -133,7 +133,7 @@
 
 
 - name: Create Pod cleaning CronJob
-  k8s:
+  kubernetes.core.k8s:
     state: present
     namespace: "{{ osbs_ocp_namespace }}"
     definition:
@@ -170,7 +170,7 @@
 
 
 - name: Create remote hosts zombie slots cleaning CronJob
-  k8s:
+  kubernetes.core.k8s:
     state: present
     namespace: "{{ osbs_ocp_namespace }}"
     definition:
