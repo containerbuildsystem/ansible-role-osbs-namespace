@@ -1,2 +1,4 @@
 ---
 zombie_slots_pruner_enabled: false
+osbs_pruner_successful_jobs: 1
+osbs_pruner_failed_jobs: 1
