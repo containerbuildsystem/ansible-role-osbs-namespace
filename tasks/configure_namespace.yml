@@ -145,6 +145,7 @@
         name: "{{ item.name }}"
       spec:
         schedule: "{{ pod_pruning_schedule }}"
+        concurrencyPolicy: Forbid
         successfulJobsHistoryLimit: "{{ osbs_generic_cronjob_successful_jobs }}"
         failedJobsHistoryLimit: "{{ osbs_generic_cronjob_failed_jobs }}"
         jobTemplate:
