@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Check out repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Run ansible-lint
         uses: containerbuildsystem/actions/ansible-lint@master
